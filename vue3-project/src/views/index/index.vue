@@ -1,16 +1,18 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
 import Banner from './banner.vue'
-import Advantage from './advantage.vue'
+import Aboutus from './aboutus.vue'
+import Ourwork from './ourwork.vue'
+import Contactus from './contactus.vue'
 </script>
 
 <template>
-  <Banner/>
+  <Banner />
   <div class="container">
-  <Advantage/>
+    <Aboutus />
+    <Ourwork />
+    <Contactus />
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
