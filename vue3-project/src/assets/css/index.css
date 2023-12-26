@@ -1,0 +1,224 @@
+:root {
+    --bgcolor:#2462a8;
+}
+html,body{
+    min-width: 1280px;
+    width: 100%;
+    height: 100%;
+}
+
+/* 页面头部 */
+.header {
+    height: 70px;
+}
+
+/* 固定定位 */
+.header-list{
+    position:fixed;
+    top:0;
+    left:0;
+    width: 100%;
+    height: 70px;
+    background-color: #fff;
+    box-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
+}
+.header-top{
+    width: 1280px;
+    height: 70px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+/* logo */
+.logo {
+    width: 200px;
+}
+.logo a {
+    background: url(../images/logo.png) no-repeat center center;
+    width: 180px;
+    height: 50px;
+    display: inline-block; /* 转换行内块 */
+    background-size: contain;
+}
+li {
+    list-style-type: none; /* 去除默认标记 */
+}
+/* 头部导航 */
+.header-top ul{
+    flex: 1;
+    display: flex;
+}
+.header-menu li {
+    margin: 0 30px;
+    font-size: 16px;
+    font-weight: 700;
+    position: relative;
+}
+.header-menu ul li span {
+    font-size: 16px;
+    font-weight: 700;
+}
+/* 鼠标移上去的时候 */
+.header-menu ul li span:hover {
+    color: var(--bgcolor);
+    text-decoration: none;
+}
+.header-menu ul li span {
+    color: var(--bgcolor);
+    text-decoration: none;
+}
+/* 由于<router-link>渲染成的是<a>标签,需要针对a标签设置:hover状态的样式。 */
+.header-top ul li a {
+    color: black; /* 默认颜色设置为黑色 */
+    text-decoration: none; /* 去除下划线 */
+}
+/* 设置路由链接在悬停时的样式为蓝色 */
+.header-top ul li a:hover {
+    color: var(--bgcolor); /* 悬停时颜色变为定义的蓝色 */
+}
+/* 伪元素下划线特效 */
+.header-menu li::before {
+    content:'';
+    position: absolute;
+    bottom: -24px;
+    left: 50%;
+    width: 0;
+    height: 100%;
+    border-bottom: 3px solid var(--bgcolor);
+    transition: all 0.2s;
+}
+.header-menu li:hover::before{
+    content:'';
+    width: 100%;
+    left: 0;
+}
+/* 头部右侧 */
+.header-right {
+    display: flex;
+}
+.header-right-l{
+    /* background:url(../images/telephone.png) no-repeat; */
+    width:35px;
+    height:35px;
+    margin-right: 10px;
+    margin-top: 25px;
+    -webkit-mask-box-image:url(../images/telephone.png);
+    background: var(--bgcolor);
+}
+.header-right-r p{
+    color: var(--bgcolor);
+    font-weight: 600;
+    line-height: 1;
+}
+/* ************** */
+/* ************** */
+/* ************** */
+/* 主页轮播 */
+.banner-list {
+    max-width: 1920px;
+    margin: auto;
+}
+/* 图片样式 */
+.banner-list.el-carousel-item>img{
+    width: 100%;
+    height: 600px;
+    object-fit: cover;
+}
+/* 轮播下面图片 */
+.banner-item {
+background-color: var(--bgcolor);
+text-align: center;
+padding-top: 20px;
+}
+.banner-item img{
+    width: 1280px;
+}
+.indexForm {
+    position: relative;
+}
+.banner-list .form_bg {
+    position: absolute;
+    right: 130px;
+    top: 100px;
+    width:380px;
+    padding: 20px 0;
+    background-color: #fff;
+    text-align: center;
+    box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.2);
+}
+/* 标题文字 */
+.form_head {
+    font-size: 30px;
+    line-height: 80px;
+}
+.form_head b{
+    color: var(--bgcolor);
+}
+.form_bg .el-input {
+    width: 300px;
+    margin-bottom: 20px;
+    font-size: 16px;
+}
+.form_bg .el-input--large .el-input__wrapper {
+    padding: 5px 15px;
+}
+.form_bg .el-button {
+    width: 300px;
+    height: 50px;
+    border-radius: 40px;
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+.privacy{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.privacy input{
+    margin-right: 10px;
+}
+.checkbox-type{
+    appearance: none;
+    width: 15px;
+    height: 15px;
+}
+/* 复选框未选中 */
+.checkbox-type::before{
+    content: '';
+    border-radius: 50%;
+    width: 13px;
+    height: 13px;
+    border: 2px solid #aaa;
+    display: inline-block;
+}
+/* 复选框已选中 */
+.checkbox-type:checked::before{
+    content: '';
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: var(--bgcolor);
+    border: 1px solid var(--bgcolor);
+    color: #fff;
+}
+.container{
+    width: 1280px;
+    margin: auto;
+}
+.container_bg{
+    padding: 50px 0;
+}
+.index_title {
+    text-align: center;
+}
+.index_title h3{
+    font-size: 42px;
+    font-weight: 700;
+}
+.index_title p {
+    font-size: 20px;
+    color: #666;
+    padding: 20px;
+}
+
