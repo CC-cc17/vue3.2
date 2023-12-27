@@ -1,15 +1,16 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
+import Banner from './banner.vue'
+import Cards from './cards.vue'
+
 
 </script>
 
 <template>
-    <div>
-        行业信息
+    <Banner />
+    <div class="container">
+    <Cards />
     </div>
-    
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>

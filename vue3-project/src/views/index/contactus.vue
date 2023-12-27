@@ -64,6 +64,7 @@ const resetForm = (formEl: FormInstance | undefined) => {
 </script>
 
 <template>
+    <div class="contactusbig">
         <div class="index_title">
         <h3>联系我们</h3>
     </div>
@@ -101,12 +102,16 @@ const resetForm = (formEl: FormInstance | undefined) => {
                     src="https://restapi.amap.com/v3/staticmap?location=104.000076,30.556682&zoom=13&size=600*300&markers=mid,,A:104.000076,30.556682&key=0e5ac2faec4d5cf7ce465119647a9217"
                     allowfullscreen scrolling="no">
                 </iframe>
+                </div>
             </div>
         </div>
     </div>
 </template>
 
 <style scoped>
+.contactusbig{
+    margin: 100px;
+}
 .container_bg {
     display: flex;
     justify-content: center;
@@ -119,13 +124,14 @@ const resetForm = (formEl: FormInstance | undefined) => {
 }
 .form-container {
     flex: 1;
-    padding: 20px;
+    padding: 40px;
     background-color: white;
+    border-radius: 10px;
+    text-shadow: 0 5px 5px rgba(0, 0, 0, 0.1);
 }
 .map-container {
     flex: 1;
     padding: 20px;
-    overflow: hidden;
     font-size: 16px;
     color: #000000ab;
     text-align: center;
