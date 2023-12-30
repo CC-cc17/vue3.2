@@ -30,10 +30,19 @@ const routes =[
         name:'login', //名字
         component:()=>import('../views/login/index.vue') //位置
     },
+    {
+        path: '/industry/:id', // 行业动态路径参数
+        name: 'IndustryDetail',
+        component: () => import('@/views/industries/index.vue') //位置
+    },
 ]
 
 const router = createRouter ({
     history: createWebHashHistory(),
-    routes
+    routes,
+    scrollBehavior(to, from, savedPosition) {
+        // 始终滚动到顶部
+        return { top: 0 }
+      },
 })
 export default router
