@@ -1,14 +1,18 @@
 <script setup>
-import {ref} from 'vue'
+import { ref } from 'vue'
+import Banner from './banner.vue'
+import Cards from './cards.vue'
+
 
 </script>
 
 <template>
-    <div>
-        性格测试
+    <Banner />
+    <div class="container">
+    <Cards />
     </div>
-    
 </template>
+
 
 <style scoped>
 

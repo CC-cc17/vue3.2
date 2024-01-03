@@ -4,8 +4,8 @@ import { useRouter } from 'vue-router'
 let headlist = ref([
     {title:'首页',path:'/index'},
     {title:'行业信息',path:'/industry'},
-    {title:'参考资料',path:'/article'},
     {title:'性格测试',path:'/test'},
+    {title:'参考资料',path:'/article'},
 
 ])
 const router = useRouter()
