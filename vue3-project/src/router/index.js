@@ -31,6 +31,11 @@ const routes =[
         component:()=>import('../views/login/index.vue') //位置
     },
     {
+        path:'/register', //注册路径
+        name:'register', //名字
+        component:()=>import('../views/login/register.vue') //位置
+    },
+    {
         path: '/industry/:id', // 行业动态路径参数
         name: 'IndustryDetail',
         component: () => import('@/views/industries/index.vue') //位置

@@ -3,7 +3,8 @@
     "echarts": "^5.4.3",
     "element-plus": "^2.4.3",
     "vue-router": "^4.2.5",
-    "vue3-count-to": "^1.1.2"
+    "vue3-count-to": "^1.1.2",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "unplugin-auto-import": "^0.17.2",
