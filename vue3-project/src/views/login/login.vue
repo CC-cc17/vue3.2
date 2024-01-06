@@ -11,6 +11,10 @@ const register = () => {
   store.commit('setEmail', email.value);
   router.push('/register');
 };
+const login = () => {
+  store.commit('setEmail', email.value);
+  router.push('/reallogin');
+};
 </script>
 
 <template>
@@ -26,8 +30,8 @@ const register = () => {
             <p class="email-description">填写邮箱地址来注册或者登录平台</p>
             <el-input v-model="email" placeholder="请输入您的邮箱地址"></el-input>
             <div class="buttons">
-              <el-button type="success" @click="login">登录</el-button>
-              <el-button type="primary" @click="register">注册</el-button>
+              <el-button  round color='#2462a8' @click="login">登录</el-button>
+              <el-button round type="success" @click="register">注册</el-button>
             </div>
           </div>
           <img class="image-container" src="@/assets/images/loginlogo.jpg" alt="logo">
@@ -79,7 +83,6 @@ const register = () => {
 .el-button {
   font-size: 1.1em; 
   padding: 10px 30px; 
-  border-radius: 25px; 
 }
 
 </style>

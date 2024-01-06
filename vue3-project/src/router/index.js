@@ -26,7 +26,7 @@ const routes =[
         component:()=>import('../views/test/index.vue') //位置
     },
     {
-        path:'/login', //登录路径
+        path:'/login', //登录按钮路径
         name:'login', //名字
         component:()=>import('../views/login/index.vue') //位置
     },
@@ -34,6 +34,11 @@ const routes =[
         path:'/register', //注册路径
         name:'register', //名字
         component:()=>import('../views/login/register.vue') //位置
+    },
+    {
+        path:'/reallogin', //登录页面路径
+        name:'reallogin', //名字
+        component:()=>import('../views/login/reallogin.vue') //位置
     },
     {
         path: '/industry/:id', // 行业动态路径参数
