@@ -1,6 +1,6 @@
 <script setup>
 import { ref, reactive } from 'vue'
-
+import { View } from '@element-plus/icons-vue'
 // 表单数据和规则
 const form = reactive({
   username: '',
@@ -28,6 +28,12 @@ const login = () => {
     }
   })
 }
+// 展示密码
+const showPassword = ref(false);
+
+const togglePasswordVisibility = () => {
+  showPassword.value = !showPassword.value;
+};
 
 // 发送忘记密码请求的逻辑
 const sendResetPassword = () => {
@@ -45,9 +51,16 @@ const sendResetPassword = () => {
           <el-form-item label="账号名称" prop="username">
             <el-input v-model="form.username" placeholder="请输入账号名称"></el-input>
           </el-form-item>
+
           <el-form-item label="密码" prop="password">
-            <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
+            <el-input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="请输入密码"
+          clearable>
+          <template #append>
+            <el-button :icon="View" @click="togglePasswordVisibility"></el-button>
+          </template>
+        </el-input>
           </el-form-item>
+
           <el-form-item>
             <el-button round color="#2462A8" @click="login">登录</el-button>
           </el-form-item>

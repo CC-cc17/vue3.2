@@ -56,6 +56,7 @@ const colors = ref(['#99A9BF', '#F7BA2A', '#FF9900'])
 
 .footer-left ul {
     display: flex;
+    list-style: none;
 }
 
 .footer-left ul li {

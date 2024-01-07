@@ -1,13 +1,10 @@
 <script setup>
 import {ref} from 'vue'
-
+import Article from './article.vue';
 </script>
 
 <template>
-    <div>
-        参考资料
-    </div>
-    
+    <Article/>
 </template>
 
 <style scoped>
