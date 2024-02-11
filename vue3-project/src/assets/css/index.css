@@ -132,4 +132,6 @@ html,body{
     font-size: 20px;
     color: #666;
 }
-
+#app{
+    height: 100%;
+}
