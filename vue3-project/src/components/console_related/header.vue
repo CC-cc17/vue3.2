@@ -1,17 +1,23 @@
 <script>
-import {useStore} from 'vuex';
+import {computed} from 'vue'
+import { useStore } from 'vuex';
 export default {
     setup() {
         let store = useStore()
         const getImgSrc = (user) => {
-            return new URL(`../../assets/images/${user}.png`,import.meta.url).href;
+            return new URL(`../../assets/images/${user}.png`, import.meta.url).href;
         };
-        let handleCollapse = ()=>{
+        let handleCollapse = () => {
             store.commit('updateIsCollapse');
-        }
+        };
+        // 计算属性
+        const current = computed(()=>{
+            return store.state.currentMenu;
+        })
         return {
             getImgSrc,
-            handleCollapse
+            handleCollapse,
+            current,
         };
     }
 };
@@ -27,8 +33,13 @@ export default {
                     <Menu />
                 </el-icon>
             </el-button>
-            <h3>首页</h3>
-        </div>  
+            <el-breadcrumb separator="/" class="bread">
+                <!-- 首页一定存在 -->
+                <el-breadcrumb-item :to="{ path: '/console/home' }">首页</el-breadcrumb-item>
+                <el-breadcrumb-item :to="current.path" v-if="current">
+                    {{ current.label }}</el-breadcrumb-item>
+            </el-breadcrumb>
+        </div>
         <div class="r-content">
             <el-dropdown>
                 <span class="el-dropdown-link">
@@ -45,7 +56,7 @@ export default {
     </el-header>
 </template> 
 
-<style lang="less">
+<style lang="less" scoped>
 header {
     display: flex;
     justify-content: space-between;
@@ -59,16 +70,22 @@ header {
     height: 40px;
     border-radius: 50%;
 }
+
 .l-content {
     display: flex;
-    align-items: center;  
-    .el-button{
+    align-items: center;
+
+    .el-button {
         margin-right: 20px;
     }
 }
- h3{
- color: #fff;
- font-weight: normal;
-}
 
+h3 {
+    color: #fff;
+    font-weight: normal;
+}
+.bread :deep span{
+    color: #fff !important;
+    cursor:  pointer !important;
+}
 </style>

@@ -2,6 +2,7 @@
 import { ref } from 'vue';
 import Header from '../components/console_related/header.vue';
 import Aside from '../components/console_related/aside.vue';
+import Tab from '../components/console_related/tab.vue';
 
 
 </script>
@@ -14,6 +15,7 @@ import Aside from '../components/console_related/aside.vue';
             <el-container>
                 <!-- 头部 -->
                 <Header />
+                <Tab />
                 <el-main class="right-main">
                     <!-- 内容 -->
                     <router-view />
@@ -34,7 +36,7 @@ import Aside from '../components/console_related/aside.vue';
     .lay-container {
       flex-wrap: nowrap;
       .right-main {
-        height: calc(100% - 50px) !important;
+        height: calc(100% - 48px) !important;
       }
     }
     height: 100%;

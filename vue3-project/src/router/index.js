@@ -47,7 +47,7 @@ const routes = [
     {
       path: '/console',
       component: () => import('../layouts/ConsoleLayout.vue'),
-      redirect:'/console/home',
+      redirect: '/console/home',
       children: [
         { path: '', component: () => import('../views/console/home/index.vue')},
         { path: '/console/home', name:'home', component: () => import('../views/console/home/index.vue')}, //后台主页

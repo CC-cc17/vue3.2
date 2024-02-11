@@ -112,30 +112,65 @@ export default defineComponent({
     //获取数据的方法
     const getChartData = async () =>{
       let result = await proxy.$api.getChartData();
-      let res = result.orderData
+      let orderRes = result.orderData
       let userRes = result.userData
-      let videoData = result.videoData
-      //处理数据
-      orderData.xData = res.date
-      const keyArray = Object.keys(res.data[0])
+      let videoRes = result.videoData
+
+      //处理orderData数据
+      orderData.xData = orderRes.date
+      const keyArray = Object.keys(orderRes.data[0])
       const series = []
       keyArray.forEach((key)=>{
         series.push({
           name: key,
-          data:res.data.map(item => item[key]),
+          data:orderRes.data.map(item => item[key]),
           type: 'line',
         });
       });
       orderData.series = series;
-      xOptions.xAxis.data = orderData.xData
-      xOptions.series = orderData.series
-      //userData进行渲染
+      xOptions.xAxis.data = orderData.xData;
+      xOptions.series = orderData.series;
+      //orderData进行渲染
       let hEcharts = echarts.init(proxy.$refs['echart'])
       hEcharts.setOption(xOptions);
 
-      //柱状图进行渲染
+      //处理userData
+      userData.xData = userRes.map((item) => item.date);
+      userData.series = [
+        {
+          name:'新增用户',
+          data:userRes.map((item) => item.new),
+          type: "bar",
+        },
+        {
+          name:'活跃用户',
+          data:userRes.map((item) => item.active),
+          type: "bar",
+        },
+      ];
       
+      xOptions.xAxis.data = userData.xData;
+      xOptions.series = userData.series;
+      
+      //orderData进行渲染
+      let uEcharts = echarts.init(proxy.$refs['userechart'])
+      uEcharts.setOption(xOptions);
+      
+      //处理videoData
+      videoData.series = [
+        {
+          data:videoRes,
+          type:'pie',
+        },
+      ];
+      pieOptions.series = videoData.series;
+
+      //videoData进行渲染
+      let vEcharts = echarts.init(proxy.$refs['videoechart'])
+      vEcharts.setOption(pieOptions);
     };
+
+
 
     return {
       tableData,
@@ -214,7 +249,7 @@ export default defineComponent({
 </template>
   
 
-<style lang="less">
+<style lang="less" scoped>
 .home {
   .user {
     display: flex;
@@ -275,6 +310,16 @@ export default defineComponent({
       }
     }
   }
+  .graph{
+    margin-top: 20px;
+    display: flex;
+    justify-content: space-between;
+    .el-card{
+      width: 49%;
+    }
+  }
 }
+
+
 </style>
   

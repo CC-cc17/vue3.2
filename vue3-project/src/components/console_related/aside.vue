@@ -1,10 +1,12 @@
 <script>
 import{useRouter} from 'vue-router'
+import { useStore } from 'vuex';
 export default {
     setup() {
+        const store = useStore()
         const list = [
             {
-                path: '/user',
+                path: '/console/user',
                 name: 'user',
                 label: '用户管理',
                 icon: 'user',
@@ -16,14 +18,14 @@ export default {
                 icon: 'location',
                 children: [
                     {
-                        path: '/page1',
+                        path: '/console/page1',
                         name: 'page1',
                         label: '页面1',
                         icon: 'setting',
                         url: 'Other/PageOne'
                     },
                     {
-                        path: '/page2',
+                        path: '/console/page2',
                         name: 'page2',
                         label: '页面2',
                         icon: 'setting',
@@ -45,8 +47,10 @@ export default {
 
         const clickMenu = (item) => {
             router.push({
-                name:item.name,
-            })
+                name: item.name,
+            });
+            //vuex 来管理
+            store.commit('selectMenu', item);
         }
 
         return {

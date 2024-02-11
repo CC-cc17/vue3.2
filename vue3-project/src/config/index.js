@@ -23,6 +23,6 @@ const EnvConfig = {
 export default {
     env,
     //mock总开关
-    mock:true,
+    mock:false,
     ...EnvConfig[env]
 }
