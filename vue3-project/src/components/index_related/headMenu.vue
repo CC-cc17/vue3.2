@@ -29,7 +29,7 @@ const handleLogin = () => {
                     </li>
                 </ul>
                 <div class="header-right">
-                <el-button color='#2462a8' :dark="isDark" @click="handleLogin">登录/注册</el-button>
+                <el-button color='#2462a8' @click="handleLogin">登录/注册</el-button>
                 </div>
             </div>
         </div>

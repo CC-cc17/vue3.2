@@ -27,6 +27,7 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
   }
 
 app.config.globalProperties.$api = api;
+store.commit("addMenu",router);
 
 app.component('font-awesome-icon', FontAwesomeIcon);
 

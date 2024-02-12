@@ -32,5 +32,42 @@ export default {
             mock: false,
             data: params,
         })
-    }
+    },
+    addUser(params){
+        return request({
+            url: '/user/add',
+            method: 'post',
+            mock: false,
+            data: params,
+            // data:{total: 0,page: 1,}
+        })
+    },
+    editUser(params) {
+        return request({
+          url: '/user/edit',
+          method: 'post',
+          // 这个mock如果是true的话 用的就是线上fastmock的数据
+          mock: false,
+          data: params
+        })
+      },
+      deleteUser(params) {
+        return request({
+          url: '/user/delete',
+          method: 'get',
+          // 这个mock如果是true的话 用的就是线上fastmock的数据
+          mock: false,
+          data: params
+        })
+      },
+      //根据用户名不同返回不一样的菜单列表 
+      getMenu(params) {
+        return request({
+        url: '/permission/getMenu',
+        method: 'post',
+        // 这个mock如果是true的话 用的就是线上fastmock的数据
+        mock: false,
+        data: params
+        })
+      }
 }

@@ -1,6 +1,7 @@
 <script>
-import {computed} from 'vue'
+import {computed} from 'vue';
 import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
 export default {
     setup() {
         let store = useStore()
@@ -13,11 +14,19 @@ export default {
         // 计算属性
         const current = computed(()=>{
             return store.state.currentMenu;
-        })
+        });
+        const router = useRouter()
+        const handleLogout = () => {
+            store.commit("cleanMenu");
+            router.push({
+                name:"reallogin",
+            });
+        }
         return {
             getImgSrc,
             handleCollapse,
             current,
+            handleLogout,
         };
     }
 };
@@ -48,7 +57,7 @@ export default {
                 <template #dropdown>
                     <el-dropdown-menu>
                         <el-dropdown-item>个人中心</el-dropdown-item>
-                        <el-dropdown-item>登出</el-dropdown-item>
+                        <el-dropdown-item @click="handleLogout">登出</el-dropdown-item>
                     </el-dropdown-menu>
                 </template>
             </el-dropdown>
@@ -84,7 +93,7 @@ h3 {
     color: #fff;
     font-weight: normal;
 }
-.bread :deep span{
+:deep(.bread span) {
     color: #fff !important;
     cursor:  pointer !important;
 }

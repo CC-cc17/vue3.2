@@ -6,7 +6,7 @@ const routes = [
       component: () => import('../layouts/DefaultLayout.vue'),
       children: [
         { path: '', redirect: '/index' },
-        { path: 'index', component: () => import('../views/index/index.vue') },
+        { path: 'index', name:'index', component: () => import('../views/index/index.vue') },
         {
           path: '/industry', // 行业信息路径
           name: 'industry', // 名字
@@ -47,14 +47,17 @@ const routes = [
     {
       path: '/console',
       component: () => import('../layouts/ConsoleLayout.vue'),
-      redirect: '/console/home',
-      children: [
-        { path: '', component: () => import('../views/console/home/index.vue')},
-        { path: '/console/home', name:'home', component: () => import('../views/console/home/index.vue')}, //后台主页
-        { path: '/console/user', name:'user', component: () => import('../views/console/user/index.vue')}, //后台用户管理
-        { path: '/console/page1', name:'page1', component: () => import('../views/console/page1/index.vue')},
-        { path: '/console/page2', name:'page2', component: () => import('../views/console/page2/index.vue')},
-      ]
+      name: 'home1',
+      //redirect: '/console/home',
+      // children: [
+      //   { path: '', component: () => import('../views/console/home/index.vue')},
+      //   { path: '/console/home', name:'home', component: () => import('../views/console/home/index.vue')}, //后台主页
+      //   { path: '/console/user', name:'user', component: () => import('../views/console/user/index.vue')}, //后台用户管理
+      //   { path: '/console/jobmatch', name:'jobmatch', component: () => import('../views/console/jobmatch/index.vue')}, 
+      //   { path: '/console/page1', name:'page1', component: () => import('../views/console/page1/index.vue')},
+      //   { path: '/console/page2', name:'page2', component: () => import('../views/console/page2/index.vue')},
+      // ],
+      children:[]
     },
     {
         path: '/404',

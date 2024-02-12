@@ -1,10 +1,13 @@
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, getCurrentInstance } from 'vue'
 import { View } from '@element-plus/icons-vue'
+import { useStore } from 'vuex';
+import { useRouter } from 'vue-router';
+
 // 表单数据和规则
-const form = reactive({
-  username: '',
-  password: ''
+const loginForm = reactive({
+  username: 'admin',
+  password: 'admin',
 })
 
 const rules = {
@@ -12,22 +15,24 @@ const rules = {
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
 
-const loginFormRef = ref(null)
+const {proxy} = getCurrentInstance()
+const store = useStore()
+const router = useRouter()
+//login方法
+const login = async () =>{
+  const res = await proxy.$api.getMenu(loginForm);
+  store.commit('setMenu',res.menu);
+  store.commit('addMenu', router);
+  store.commit('setToken', res.token);
+  router.push({
+    name: "home",
+  })
+};
 
 // 弹窗状态
 const dialogVisible = ref(false)
 const emailForm = reactive({ email: '' })
 
-// 登录逻辑
-const login = () => {
-  loginFormRef.value.validate((valid) => {
-    if (valid) {
-      console.log('登录...')
-    } else {
-      console.log('请检查登录表单！')
-    }
-  })
-}
 // 展示密码
 const showPassword = ref(false);
 
@@ -46,14 +51,15 @@ const sendResetPassword = () => {
   <div class="overlay">
     <div class="login-container">
       <el-card class="login-card">
-        <h2 class="title">登录</h2>
-        <el-form class="login-form" :model="form" :ref="loginFormRef" :rules="rules" label-position="top">
-          <el-form-item label="账号名称" prop="username">
-            <el-input v-model="form.username" placeholder="请输入账号名称"></el-input>
+        <h2 class="title">系统登录</h2>
+        <el-form class="login-form" :model="loginForm" :rules="rules" label-position="top">
+          
+          <el-form-item label="账号" prop="username">
+            <el-input type="input" v-model="loginForm.username" placeholder="请输入账号"></el-input>
           </el-form-item>
 
           <el-form-item label="密码" prop="password">
-            <el-input :type="showPassword ? 'text' : 'password'" v-model="form.password" placeholder="请输入密码"
+            <el-input :type="showPassword ? 'text' : 'password'" v-model="loginForm.password" placeholder="请输入密码"
           clearable>
           <template #append>
             <el-button :icon="View" @click="togglePasswordVisibility"></el-button>
