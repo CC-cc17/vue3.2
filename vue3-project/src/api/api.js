@@ -5,7 +5,7 @@ export default {
     //home 组件
     getTableData(params) {
         return request({
-            url:'/home/getTableData',
+            url: '/home/getTableData',
             method: 'get',
             data: params,
             mock: true
@@ -13,19 +13,26 @@ export default {
     },
     getCountData() {
         return request({
-            url:'/home/getCountData',
-            method:'get',
+            url: '/home/getCountData',
+            method: 'get',
             mock: true
         })
     },
-    getChartData(){
+    getLoginData() {
         return request({
-            url:'/home/getChartData',
-            method:'get',
+            url: '/home/getLoginData',
+            method: 'get',
             mock: true
-        })       
+        })
     },
-    getUserData(params){
+    getChartData() {
+        return request({
+            url: '/home/getChartData',
+            method: 'get',
+            mock: true
+        })
+    },
+    getUserData(params) {
         return request({
             url: '/user/getUser',
             method: 'get',
@@ -33,7 +40,7 @@ export default {
             data: params,
         })
     },
-    addUser(params){
+    addUser(params) {
         return request({
             url: '/user/add',
             method: 'post',
@@ -44,30 +51,48 @@ export default {
     },
     editUser(params) {
         return request({
-          url: '/user/edit',
-          method: 'post',
-          // 这个mock如果是true的话 用的就是线上fastmock的数据
-          mock: false,
-          data: params
+            url: '/user/edit',
+            method: 'post',
+            // 这个mock如果是true的话 用的就是线上fastmock的数据
+            mock: false,
+            data: params
         })
-      },
-      deleteUser(params) {
+    },
+    deleteUser(params) {
         return request({
-          url: '/user/delete',
-          method: 'get',
-          // 这个mock如果是true的话 用的就是线上fastmock的数据
-          mock: false,
-          data: params
+            url: '/user/delete',
+            method: 'get',
+            // 这个mock如果是true的话 用的就是线上fastmock的数据
+            mock: false,
+            data: params
         })
-      },
-      //根据用户名不同返回不一样的菜单列表 
-      getMenu(params) {
+    },
+    //根据用户名不同返回不一样的菜单列表 
+    getMenu(params) {
         return request({
-        url: '/permission/getMenu',
-        method: 'post',
-        // 这个mock如果是true的话 用的就是线上fastmock的数据
-        mock: false,
-        data: params
+            url: '/permission/getMenu',
+            method: 'post',
+            // 这个mock如果是true的话 用的就是线上fastmock的数据
+            mock: false,
+            data: params
         })
-      }
+    },
+
+    // 获取登录用户信息
+    getLoginUser() {
+        return request({
+            url: '/user/loginInfo',
+            method: 'get',
+            mock: true
+        });
+    },
+    // 更新用户信息
+    updateUserInfo(data) {
+        return request({
+            url: '/user/updateInfo',
+            method: 'post',
+            mock: true,
+            data
+        });
+    }
 }

@@ -1,25 +1,25 @@
 <script>
-import { defineComponent, getCurrentInstance, onMounted, reactive, ref } from 'vue';
+import { defineComponent, getCurrentInstance, onMounted, reactive, ref, computed } from 'vue';
 import * as echarts from 'echarts';
 import axios from 'axios';
 
 export default defineComponent({
   setup() {
-    const {proxy} = getCurrentInstance();
+    const { proxy } = getCurrentInstance();
     //定义table data
     let tableData = ref([]);
     const tableLabel = {
-      name: '手机品牌',       //label名称和data名称一一对上
-      todayBuy: '今日购买',
-      monthBuy: '本月购买',
-      totalBuy: '总购买',
+      industry: '行业',       //label名称和data名称一一对上
+      studentnum: '学生人数', //todo  后端传回此行业学生人数
+      companynum: '企业数目',  //todo  后端传回此行业学生人数
     };
-    
     //定义count data
     let countData = ref([]);
+    //定义login data 初始化为对象
+    let loginData = ref({});
 
     // 获取首页table数据
-    const getTableList = async() => {
+    const getTableList = async () => {
       // await axios.get("https://dev.usemock.com/65c831f66309cc7a3775c533/home/getTableData").then((res)=>{
       // console.log(res);
 
@@ -27,13 +27,18 @@ export default defineComponent({
       //   tableData.value = res.data.data;
       // }
       // })
-    let res = await proxy.$api.getTableData();
-    tableData.value = res;
+      let res = await proxy.$api.getTableData();
+      tableData.value = res;
     };
     // 获取首页count数据
-    const getCountData = async() => {
+    const getCountData = async () => {
       let res = await proxy.$api.getCountData();
       countData.value = res;
+    }
+    // 获取首页登录信息
+    const getLoginData = async () => {
+      let res = await proxy.$api.getLoginData();
+      loginData.value = res[0];
     }
     onMounted(() => {
       getTableList();
@@ -41,6 +46,8 @@ export default defineComponent({
       getCountData();
       //获取echart表格数据
       getChartData();
+      //获取首页登录信息
+      getLoginData();
     });
 
     // 关于echarts 表格的渲染部分
@@ -82,7 +89,7 @@ export default defineComponent({
       color: ["#2ec7c9", "#b6a2de", "#5ab1ef", "#ffb980", "#d87a80", "#8d98b3"],
       series: [],
     });
-    let pieOptions =reactive({
+    let pieOptions = reactive({
       tooltip: {
         trigger: "item",
       },
@@ -98,19 +105,19 @@ export default defineComponent({
       series: [],
     });
     let orderData = reactive({
-      xData:[],
-      series:[],
+      xData: [],
+      series: [],
     });
     let userData = reactive({
-      xData:[],
-      series:[],
+      xData: [],
+      series: [],
     });
-    let videoData =reactive({
+    let videoData = reactive({
       series: [],
     });
 
     //获取数据的方法
-    const getChartData = async () =>{
+    const getChartData = async () => {
       let result = await proxy.$api.getChartData();
       let orderRes = result.orderData
       let userRes = result.userData
@@ -120,10 +127,10 @@ export default defineComponent({
       orderData.xData = orderRes.date
       const keyArray = Object.keys(orderRes.data[0])
       const series = []
-      keyArray.forEach((key)=>{
+      keyArray.forEach((key) => {
         series.push({
           name: key,
-          data:orderRes.data.map(item => item[key]),
+          data: orderRes.data.map(item => item[key]),
           type: 'line',
         });
       });
@@ -138,29 +145,29 @@ export default defineComponent({
       userData.xData = userRes.map((item) => item.date);
       userData.series = [
         {
-          name:'新增用户',
-          data:userRes.map((item) => item.new),
+          name: '新增用户',
+          data: userRes.map((item) => item.new),
           type: "bar",
         },
         {
-          name:'活跃用户',
-          data:userRes.map((item) => item.active),
+          name: '活跃用户',
+          data: userRes.map((item) => item.active),
           type: "bar",
         },
       ];
-      
+
       xOptions.xAxis.data = userData.xData;
       xOptions.series = userData.series;
-      
+
       //orderData进行渲染
       let uEcharts = echarts.init(proxy.$refs['userechart'])
       uEcharts.setOption(xOptions);
-      
+
       //处理videoData
       videoData.series = [
         {
-          data:videoRes,
-          type:'pie',
+          data: videoRes,
+          type: 'pie',
         },
       ];
       pieOptions.series = videoData.series;
@@ -170,12 +177,19 @@ export default defineComponent({
       vEcharts.setOption(pieOptions);
     };
 
+    const isExtraInfoVisible = computed(() => {
+      // 假设loginData.value.role 包含当前用户的角色
+      // 只有admin角色可以看到额外信息
+      return loginData.value.role === 'admin';
+    });
 
 
     return {
       tableData,
       tableLabel,
       countData,
+      loginData,
+      isExtraInfoVisible,
     }
   },
 })
@@ -188,62 +202,71 @@ export default defineComponent({
   <el-row class="home" :gutter="20">
     <!-- 左侧部分 -->
     <el-col :span="8" style="margin-top: 20px">
+
+      <!-- 登录信息表格 -->
       <el-card shadow="hover">
         <div class="user">
           <img src="../../../assets/images/user.png" />
           <div class="userinfo">
-            <p class="name">Admin</p>
-            <p class="role">Super Admin</p>
+            <p class="name">用户名: {{ loginData.name }}</p>
+            <p class="role">用户角色: {{ loginData.role }}</p>
           </div>
         </div>
         <div class="login-info">
-          <p>上次登录时间:<span>2024-2-10</span></p>
-          <p>上次登录地点:<span>四川</span></p>
+          <p>上次登录时间:<span>{{ loginData.last_login_time }}</span></p>
+          <p>上次登录地点:<span>{{ loginData.last_login_location }}</span></p>
         </div>
       </el-card>
 
-      <el-card shadow="hover" style="margin-top: 20px;" height="450px">
-        <el-table :data="tableData">
-          <el-table-column v-for="(val, key) in tableLabel" :key="key" :prop="key" :label="val">
-          </el-table-column>
-        </el-table>
-      </el-card>
+      <!-- 左下表格 -->
+      <div v-if="isExtraInfoVisible">
+        <el-card shadow="hover" style="margin-top: 20px;" height="450px">
+          <el-table :data="tableData">
+            <el-table-column v-for="(val, key) in tableLabel" :key="key" :prop="key" :label="val">
+            </el-table-column>
+          </el-table>
+        </el-card>
+      </div>
+
     </el-col>
+
     <!-- 右侧部分 -->
     <el-col :span="16" style="margin-top: 20px">
-    <!-- 右上数字格 -->
-    <div class="num">
-      <el-card :body-style="{display:'flex',padding: 0}" 
-      v-for = "item in countData" 
-      :key="item.name">
+      <!-- 右上数字格 -->
+      <div v-if="isExtraInfoVisible">
+        <div class="num">
+          <el-card :body-style="{ display: 'flex', padding: 0 }" v-for="item in countData" :key="item.name">
 
-      <component
-            class="icons"
-            :is="item.icon"
-            :style="{ background: item.color }"
-          ></component>
+            <component class="icons" :is="item.icon" :style="{ background: item.color }"></component>
 
-      <div class="detail">
-        <p class="num">￥{{ item.value }}</p>
-        <p class="txt">{{ item.name }}</p>
+            <div class="detail">
+              <p class="num">{{ item.value }}</p>
+              <p class="txt">{{ item.name }}</p>
+            </div>
+          </el-card>
+        </div>
       </div>
-      </el-card>
-    </div>
-    <!-- 右中echart折线图 -->
-    <el-card style="height:280px">
-      <div ref="echart" style="height:280px"></div>
-    </el-card>
-    <!-- 右下echart -->
-    <div class="graph">
-      <!-- 饼状图 -->
-      <el-card style="height: 260px;">
-        <div ref="userechart" style="height:240px"></div>
-      </el-card>
-      <!-- 柱状图 -->
-      <el-card style="height: 260px;">
-        <div ref="videoechart" style="height:240px"></div>
-      </el-card>
-    </div>
+
+      <!-- 右中echart折线图 -->
+      <div v-if="isExtraInfoVisible">
+        <el-card style="height:280px">
+          <div ref="echart" style="height:280px"></div>
+        </el-card>
+      </div>
+
+      <!-- 右下echart -->
+      <div v-if="isExtraInfoVisible">
+        <div class="graph">
+          <!-- 饼状图 -->
+          <el-card style="height: 260px;">
+            <div ref="userechart" style="height:240px"></div>
+          </el-card>
+          <!-- 柱状图 -->
+          <el-card style="height: 260px;">
+            <div ref="videoechart" style="height:240px"></div>
+          </el-card>
+        </div>
+      </div>
     </el-col>
   </el-row>
 </template>
@@ -266,6 +289,18 @@ export default defineComponent({
     }
   }
 
+  .userinfo {
+    p {
+      line-height: 30px;
+      font-size: 14px;
+
+      span {
+        color: #666;
+        margin-left: 70px;
+      }
+    }
+  }
+
   .login-info {
     p {
       line-height: 30px;
@@ -278,15 +313,18 @@ export default defineComponent({
       }
     }
   }
-  .num{
+
+  .num {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
-    .el-card{
+
+    .el-card {
       width: 32%;
       margin-bottom: 20px;
     }
-    .icons{
+
+    .icons {
       width: 80px;
       height: 80px;
       font-size: 30px;
@@ -294,32 +332,35 @@ export default defineComponent({
       line-height: 80px;
       color: #fff;
     }
-    .detail{
+
+    .detail {
       margin-left: 15px;
       display: flex;
       flex-direction: column;
       justify-content: center;
-      .num{
+
+      .num {
         font-size: 30px;
         margin-bottom: 10px;
       }
-      .txt{
+
+      .txt {
         font-size: 14px;
         text-align: center;
-        color:#999;
+        color: #999;
       }
     }
   }
-  .graph{
+
+  .graph {
     margin-top: 20px;
     display: flex;
     justify-content: space-between;
-    .el-card{
+
+    .el-card {
       width: 49%;
     }
   }
 }
-
-
 </style>
   

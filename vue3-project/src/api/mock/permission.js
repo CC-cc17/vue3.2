@@ -19,8 +19,8 @@ export default {
             {
               path: '/console/jobmatch',
               name: 'jobmatch',
-              label: '职业配对',
-              icon: 'video-play',
+              label: '职业配对管理',
+              icon: 'suitcaseLine',
               url: 'jobmatch/index'
             },
             {
@@ -30,26 +30,6 @@ export default {
               icon: 'user',
               url: 'user/index'
             },
-            {
-              label: '其他',
-              icon: 'location',
-              children: [
-                {
-                  path: '/console/page1',
-                  name: 'page1',
-                  label: '页面1',
-                  icon: 'setting',
-                  url: 'page1/index'
-                },
-                {
-                  path: '/console/page2',
-                  name: 'page2',
-                  label: '页面2',
-                  icon: 'setting',
-                  url: 'page2/index'
-                }
-              ]
-            }
           ],
           token: Mock.Random.guid(),
           message: '获取成功'
@@ -68,11 +48,24 @@ export default {
               url: 'home/index'
             },
             {
-              path: '/console/jobmatch',
-              name: 'jobmatch',
               label: '职业配对',
-              icon: 'video-play',
-              url: 'jobmatch/index'
+              icon: 'suitcaseLine',
+              children: [
+                {
+                  path: '/console/matchinfo',
+                  name: 'matchinfo',
+                  label: '配对信息',
+                  icon: 'document',
+                  url: 'matchinfo/index'
+                },
+                {
+                  path: '/console/matchresult',
+                  name: 'matchresult',
+                  label: '配对结果',
+                  icon: 'messageBox',
+                  url: 'matchresult/index'
+                }
+              ]
             },
           ],
           token: Mock.Random.guid(),

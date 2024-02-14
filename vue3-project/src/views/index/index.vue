@@ -7,7 +7,7 @@ import Contactus from './contactus.vue'
 </script>
 
 <template>
-  <Banner />
+    <Banner />
   <div class="container">
     <Aboutus />
     <Ourwork />
@@ -15,4 +15,5 @@ import Contactus from './contactus.vue'
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>

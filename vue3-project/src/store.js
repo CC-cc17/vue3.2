@@ -54,13 +54,13 @@ export default createStore({
         if(item.children) {
             item.children = item.children.map(item => {
             let url = `./views/console/${item.url}.vue`
-            item.component = () => import (url)
+            item.component = () => import (/* @vite-ignore */url)
             return item
           })
           menuArray.push(...item.children)
         } else {
           let url = `./views/console/${item.url}.vue`
-          item.component = () => import (url)
+          item.component = () => import (/* @vite-ignore */url)
           menuArray.push(item)
         }
       })
