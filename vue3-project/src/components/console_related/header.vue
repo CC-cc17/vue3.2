@@ -19,6 +19,7 @@ export default {
         const router = useRouter()
         const handleLogout = () => {
             store.commit("cleanMenu");
+            store.commit("clearToken")
             router.push({
                 name: "reallogin",
             });

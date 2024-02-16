@@ -6,8 +6,8 @@ import { useRouter } from 'vue-router';
 
 // 表单数据和规则
 const loginForm = reactive({
-  username: 'peterzhang',
-  password: '6677',
+  username: 'admin',
+  password: 'admin',
 })
 
 const rules = {
@@ -15,18 +15,28 @@ const rules = {
   password: [{ required: true, message: '请输入密码', trigger: 'blur' }]
 }
 
-const {proxy} = getCurrentInstance()
+const { proxy } = getCurrentInstance()
 const store = useStore()
 const router = useRouter()
 //login方法
-const login = async () =>{
-  const res = await proxy.$api.getMenu(loginForm);
-  store.commit('setMenu',res.menu);
-  store.commit('addMenu', router);
-  store.commit('setToken', res.token);
+const login = async () => {
+  const res = await proxy.$api.userLogin(loginForm);
+  if (res.code === 200) {
+    // 将token存储在vuex里
+    store.commit('setToken', res.data.token);
+    // 把token存到cookie里
+    document.cookie = `token=${res.data.token}; path=/`;
+
+    // 根据token获取左侧菜单信息
+    const menuRes = await proxy.$api.getMenu({ token: res.data.token });
+    console.log(menuRes.data.menu)
+    store.commit('setMenu', menuRes.data.menu);
+    store.commit('addMenu', router);
+  }
+
   router.push({
     name: "home",
-  })
+  });
 };
 
 // 弹窗状态
@@ -53,18 +63,18 @@ const sendResetPassword = () => {
       <el-card class="login-card">
         <h2 class="title">系统登录</h2>
         <el-form class="login-form" :model="loginForm" :rules="rules" label-position="top">
-          
+
           <el-form-item label="账号" prop="username">
             <el-input type="input" v-model="loginForm.username" placeholder="请输入账号"></el-input>
           </el-form-item>
 
           <el-form-item label="密码" prop="password">
             <el-input :type="showPassword ? 'text' : 'password'" v-model="loginForm.password" placeholder="请输入密码"
-          clearable>
-          <template #append>
-            <el-button :icon="View" @click="togglePasswordVisibility"></el-button>
-          </template>
-        </el-input>
+              clearable>
+              <template #append>
+                <el-button :icon="View" @click="togglePasswordVisibility"></el-button>
+              </template>
+            </el-input>
           </el-form-item>
 
           <el-form-item>
@@ -77,7 +87,7 @@ const sendResetPassword = () => {
       </el-card>
     </div>
     <el-dialog title="忘记密码" v-model="dialogVisible" width="400px">
-        <div class="reset-password-instructions">我们将发送密码到注册邮箱。</div>
+      <div class="reset-password-instructions">我们将发送密码到注册邮箱。</div>
       <el-form :model="emailForm">
         <el-form-item label="邮箱地址">
           <el-input v-model="emailForm.email" placeholder="请输入注册邮箱"></el-input>
@@ -107,8 +117,8 @@ const sendResetPassword = () => {
 .login-card {
   width: 400px;
   padding: 20px;
-  background-color: #fff; 
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .title {
@@ -130,16 +140,18 @@ a.forgot-password {
   text-decoration: underline;
   cursor: pointer;
 }
+
 .el-dialog__wrapper {
-  z-index: 1000; 
+  z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
 }
+
 .reset-password-instructions {
-    margin-bottom: 20px; 
-    color: #666; 
-    font-size: 14px; 
-    text-align: center; 
-  }
+  margin-bottom: 20px;
+  color: #666;
+  font-size: 14px;
+  text-align: center;
+}
 </style>

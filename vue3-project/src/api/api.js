@@ -67,7 +67,7 @@ export default {
             data: params
         })
     },
-    //根据用户名不同返回不一样的菜单列表 
+    //根据用户名(TODO 根据用户角色)不同返回不一样的菜单列表 
     getMenu(params) {
         return request({
             url: '/permission/getMenu',
@@ -93,6 +93,15 @@ export default {
             method: 'post',
             mock: true,
             data
+        });
+    },
+    //用户登录
+    userLogin(params){
+        return request({
+            url:'/user/login',
+            method: 'post',
+            mock: false,
+            data:params
         });
     }
 }

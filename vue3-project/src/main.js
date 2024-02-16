@@ -29,6 +29,26 @@ for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
 app.config.globalProperties.$api = api;
 store.commit("addMenu",router);
 
+router.beforeEach((to, from, next) => {
+  // 检查即将进入的路由是否以/console开头
+  if (to.path.startsWith('/console')) {
+    // 如果是/console开头的路径，则检查token
+    store.commit('getToken');
+    const token = store.state.token;
+
+    // 如果没有token且不是登录页面，则重定向到登录页面
+    if (!token && to.name !== 'reallogin') {
+      next({ name: 'reallogin' });
+    } else {
+      // 如果有token或者是登录页面，就继续
+      next();
+    }
+  } else {
+    // 如果不是/console开头的路径，就直接放行
+    next();
+  }
+});
+
 app.component('font-awesome-icon', FontAwesomeIcon);
 
 app.use(router).use(store).use(ElementPlus);

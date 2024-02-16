@@ -41,33 +41,33 @@ export default createStore({
       state.menu = val
       localStorage.setItem('menu',JSON.stringify(val))
     },
-    addMenu(state,router) {
-      if(!localStorage.getItem('menu')) {
-        return
+    addMenu(state, router) {
+      if (!localStorage.getItem('menu')) {
+        return;
       }
-      const menu = JSON.parse(localStorage.getItem('menu'))
-      state.menu = menu
-
-      const menuArray = []
-
+      const menu = JSON.parse(localStorage.getItem('menu')); // 这里可能抛出错误
+      state.menu = menu;
+    
+      const menuArray = [];
+    
       menu.forEach(item => {
-        if(item.children) {
-            item.children = item.children.map(item => {
-            let url = `./views/console/${item.url}.vue`
-            item.component = () => import (/* @vite-ignore */url)
-            return item
-          })
-          menuArray.push(...item.children)
+        if (item.children) {
+          item.children = item.children.map(item => {
+            let url = `./views/console/${item.url}.vue`;
+            item.component = () => import (/* @vite-ignore */url);
+            return item;
+          });
+          menuArray.push(...item.children);
         } else {
-          let url = `./views/console/${item.url}.vue`
-          item.component = () => import (/* @vite-ignore */url)
-          menuArray.push(item)
+          let url = `./views/console/${item.url}.vue`;
+          item.component = () => import (/* @vite-ignore */url);
+          menuArray.push(item);
         }
-      })
-
+      });
+    
       menuArray.forEach(item => {
-        router.addRoute('home1', item)
-      })
+        router.addRoute('home1', item);
+      });
     },
     cleanMenu(state) {
       state.menu = []
@@ -75,7 +75,7 @@ export default createStore({
     },
     setToken(state,val) {
       state.token = val
-      Cookie.get('tooken',val)
+      Cookie.set('token',val)
     },
     clearToken(state) {
       state.token = ''

@@ -1,6 +1,7 @@
 import axios from "axios";
 import config from '../config'
 import {ElMessage} from 'element-plus'
+import Cookies from "js-cookie";
 
 const NETWORK_ERROR = '网络请求异常,请稍后重试'
 //创建axios实例对象
@@ -21,7 +22,7 @@ service.interceptors.response.use((res) =>{
     const {code, data, msg} = res.data
     //根据后端而定
     if (code == 200){
-        return data
+        return {code, data, msg}
     }else {
     //网络请求错误
     ElMessage.error(msg || NETWORK_ERROR)
