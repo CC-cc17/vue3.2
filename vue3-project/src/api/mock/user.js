@@ -29,7 +29,6 @@ for (let i = 0; i < count; i++) {
       birth: Mock.Random.date(),
       sex: Mock.Random.integer(0, 1),
       role: Mock.Random.pick(['admin', 'student','company']), // 假设角色只有管理员和普通用户两种
-      matchResult: Mock.Random.integer(0, 1) // 假设配对记录有已匹配(1)和未匹配(0)两种状态
     })
   )
 }
@@ -42,15 +41,12 @@ export default {
    * @return {{code: number, count: number, data: *[]}}
    */
   getUserList: config => {
-    const { name, page = 1, limit = 20, role, matchResult } = param2Obj(config.url)
+    const { name, page = 1, limit = 20, role} = param2Obj(config.url)
   
     const mockList = List.filter(user => {
       if (name && user.name.indexOf(name) === -1 && user.addr.indexOf(name) === -1) return false;
       if (role && user.role !== role) return false;
       // 修改 matchResult 的过滤条件以处理 0 和 1 的情况
-      if (matchResult && ['0', '1'].includes(matchResult) && user.matchResult.toString() !== matchResult) {
-        return false;
-      }
       return true;
     });
   

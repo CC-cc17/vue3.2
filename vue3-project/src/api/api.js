@@ -18,11 +18,13 @@ export default {
             mock: true
         })
     },
-    getLoginData() {
+    //获取用户登录信息 (在用)
+    getUserInfo(params) {
         return request({
-            url: '/home/getLoginData',
+            url: '/user/info',
             method: 'get',
-            mock: true
+            data: params,
+            mock: false
         })
     },
     getChartData() {
@@ -32,14 +34,16 @@ export default {
             mock: true
         })
     },
+    
     getUserData(params) {
         return request({
-            url: '/user/getUser',
+            url: '/user/list',
             method: 'get',
             mock: false,
             data: params,
         })
     },
+
     addUser(params) {
         return request({
             url: '/user/add',
@@ -78,14 +82,15 @@ export default {
         })
     },
 
-    // 获取登录用户信息
-    getLoginUser() {
-        return request({
-            url: '/user/loginInfo',
-            method: 'get',
-            mock: true
-        });
-    },
+    // // 获取登录用户信息 
+    // getLoginUser() {
+    //     return request({
+    //         url: '/user/loginInfo',
+    //         method: 'get',
+    //         mock: true
+    //     });
+    // },
+
     // 更新用户信息
     updateUserInfo(data) {
         return request({

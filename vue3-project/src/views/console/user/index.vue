@@ -13,18 +13,8 @@
       </el-form-item>
     </el-form>
 
-    <!-- 筛选功能 -->
     <el-form :inline="true" :model="formInline">
-      <el-form-item label="配对状态">
-        <el-select v-model="formInline.matchResult" placeholder="请选择配对状态">
-          <el-option label="未匹配" value="0" />
-          <el-option label="已匹配" value="1" />
-        </el-select>
-      </el-form-item>
-    </el-form>
-
-    <el-form :inline="true" :model="formInline">
-      <el-form-item label="请输入">
+      <el-form-item>
         <el-input v-model="formInline.keyword" placeholder="请输入关键字" />
       </el-form-item>
 
@@ -39,10 +29,12 @@
       </el-form-item>
     </el-form>
   </div>
+
   <div class="table">
     <el-table :data="list" style="width: 100%" height="500px">
       <el-table-column v-for="item in tableLabel" :key="item.prop" :label="item.label" :prop="item.prop"
-        :width="item.width ? item.width : 125" />
+        :width="item.width ? item.width : 200" />
+        
       <el-table-column fixed="right" label="操作" min-width="180">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -53,12 +45,13 @@
     <el-pagination small background layout="prev, pager, next" :total="config.total" @current-change="changePage"
       class="pager mt-4" />
   </div>
+
   <el-dialog v-model="dialogVisible" :title="action == 'add' ? '新增用户' : '编辑用户'" width="35%" :before-close="handleClose">
     <el-form :inline="true" :model="formUser" ref="userForm">
       <el-row>
         <el-col :span="12">
-          <el-form-item label="姓名" prop="name" :rules="[{ required: true, message: '姓名是必填项' }]">
-            <el-input v-model="formUser.name" placeholder="请输入姓名" />
+          <el-form-item label="用户名" prop="username" :rules="[{ required: true, message: '用户名是必填项' }]">
+            <el-input v-model="formUser.name" placeholder="请输入用户名" />
           </el-form-item>
         </el-col>
         <el-col :span="12">
@@ -108,6 +101,7 @@ import {
   onMounted,
   ref,
   reactive,
+  computed,
 } from "vue";
 
 export default defineComponent({
@@ -116,61 +110,79 @@ export default defineComponent({
     const list = ref([]);
     const tableLabel = reactive([
       {
-        prop: "name",
-        label: "姓名",
+        prop: "uid",
+        label: "#uid",
       },
       {
-        prop: "age",
-        label: "年龄",
+        prop: "username",
+        label: "用户名",
       },
       {
-        prop: "sexLabel",
-        label: "性别",
+        prop: "phone",
+        label: "联系电话",
       },
       {
-        prop: "birth",
-        label: "出生日期",
-        width: 200,
-      },
-      {
-        prop: "addr",
-        label: "地址",
-        width: 200,
+        prop: "email",
+        label: "邮箱",
       },
       {
         prop: "role",
-        label: "角色",
-        width: 200,
+        label: "用户类型",
       },
       {
-        prop: "matchResult",
-        label: "匹配状态",
-        width: 200,
-      },
+        prop: "createTimeFormatted",
+        label: "创建时间",
+      }
     ]);
     onMounted(() => {
       getUserData(config);
     });
+
     const config = reactive({
       total: 0,
       page: 1,
       name: "",
     });
+
     const getUserData = async (config) => {
       let params = {
         page: config.page,
         name: config.name,
         role: config.role,
-        matchResult: config.matchResult,
       };
+
       let res = await proxy.$api.getUserData(params);
-      // console.log(res);
-      config.total = res.count;
-      list.value = res.list.map((item) => {
-        item.sexLabel = item.sex === 0 ? "女" : "男";
+      config.total = res.data.count;
+      list.value = res.data.list.map((item) => {
+        // 处理 userType
+        switch (item.userType) {
+          case 'admin':
+            item.role = '系统管理员';
+            break;
+          case 'student':
+            item.role = '学生用户';
+            break;
+          case 'company':
+            item.role = '企业用户';
+            break;
+          default:
+            item.role = item.userType;
+        }
+        // 处理日期
+        if (item.createTime) {
+          const date = new Date(item.createTime);
+          if (!isNaN(date.getTime())) {
+            // 日期格式化为 YYYY-MM-DD
+            item.createTimeFormatted = date.toISOString().split('T')[0];
+          } else {
+            item.createTimeFormatted = '无效日期';
+          }
+        }
+
         return item;
       });
     };
+
     const changePage = (page) => {
       // console.log(page);
       config.page = page;
@@ -179,27 +191,28 @@ export default defineComponent({
     const formInline = reactive({
       keyword: "",
       role: "", // 新增筛选条件角色
-      matchResult: "", // 新增筛选条件配对记录
     });
+
     const handleSearch = () => {
       config.name = formInline.keyword;
       config.role = formInline.role;
-      config.matchResult = formInline.matchResult;
       getUserData(config);
     };
+
     // 清空表单方法
     const resetSearch = () => {
       formInline.role = '';
-      formInline.matchResult = '';
       formInline.keyword = '';
+      getUserData(formInline);
     };
+
     // 控制模态框的显示隐藏
     const dialogVisible = ref(false);
     const handleClose = (done) => {
-      ElMessageBox.confirm("确定关闭吗?",{
-        confirmButtonText:'确认',
-        cancelButtonText:'取消',
-        type:'warning'
+      ElMessageBox.confirm("确定关闭吗?", {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(() => {
           proxy.$refs.userForm.resetFields();
@@ -209,14 +222,16 @@ export default defineComponent({
           // catch error
         });
     };
+
     // 添加用户的form数据
     const formUser = reactive({
-      name: "", // 添加用户的 用户名
+      username: "", // 添加用户的 用户名
       age: "",
       sex: "",
       birth: "",
       addr: "",
     });
+
     const timeFormat = (time) => {
       var time = new Date(time);
       var year = time.getFullYear();
@@ -227,6 +242,7 @@ export default defineComponent({
       }
       return year + "-" + add(month) + "-" + add(date);
     };
+
     // 添加用户
     const onSubmit = () => {
       proxy.$refs.userForm.validate(async (valid) => {
@@ -319,6 +335,7 @@ export default defineComponent({
       handleAdd,
       handleDelete,
       resetSearch,
+      timeFormat,
     };
   },
 });

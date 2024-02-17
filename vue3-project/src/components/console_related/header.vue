@@ -52,8 +52,9 @@ export default {
         // 加载用户信息
         const loadUserInfo = async () => {
             try {
-                let response = await proxy.$api.getLoginUser();
-                userForm.value = response; // 假设后端返回的格式是 { data: userData }
+                const token = store.state.token;
+                let res = await proxy.$api.getUserInfo({token: token});
+                userForm.value = res.data; 
             } catch (error) {
                 console.error('无法获取用户信息:', error);
             }

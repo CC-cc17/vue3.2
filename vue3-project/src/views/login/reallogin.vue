@@ -29,7 +29,7 @@ const login = async () => {
 
     // 根据token获取左侧菜单信息
     const menuRes = await proxy.$api.getMenu({ token: res.data.token });
-    console.log(menuRes.data.menu)
+    console.log(menuRes.data)
     store.commit('setMenu', menuRes.data.menu);
     store.commit('addMenu', router);
   }

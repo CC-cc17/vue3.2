@@ -2,6 +2,8 @@
 import { defineComponent, getCurrentInstance, onMounted, reactive, ref, computed } from 'vue';
 import * as echarts from 'echarts';
 import axios from 'axios';
+import { useStore } from 'vuex';
+
 
 export default defineComponent({
   setup() {
@@ -36,9 +38,12 @@ export default defineComponent({
       countData.value = res;
     }
     // 获取首页登录信息
-    const getLoginData = async () => {
-      let res = await proxy.$api.getLoginData();
-      loginData.value = res[0];
+    const store = useStore()
+    const getLoginInfo = async () => {
+      const token = store.state.token;
+      let res = await proxy.$api.getUserInfo({token: token});
+      console.log(res);
+      loginData.value = res.data;
     }
     onMounted(() => {
       getTableList();
@@ -47,7 +52,7 @@ export default defineComponent({
       //获取echart表格数据
       getChartData();
       //获取首页登录信息
-      getLoginData();
+      getLoginInfo();
     });
 
     // 关于echarts 表格的渲染部分
@@ -183,6 +188,18 @@ export default defineComponent({
       return loginData.value.role === 'admin';
     });
 
+    const computedRole = computed(() => {
+      switch (loginData.value.role) {
+        case 'admin':
+          return '系统管理员';
+        case 'student':
+          return '学生用户';
+        case 'company':
+          return '企业用户';
+        default:
+          return '未知角色';
+      }
+    });
 
     return {
       tableData,
@@ -190,6 +207,7 @@ export default defineComponent({
       countData,
       loginData,
       isExtraInfoVisible,
+      computedRole,
     }
   },
 })
@@ -208,13 +226,13 @@ export default defineComponent({
         <div class="user">
           <img src="../../../assets/images/user.png" />
           <div class="userinfo">
-            <p class="name">用户名: {{ loginData.name }}</p>
-            <p class="role">用户角色: {{ loginData.role }}</p>
+            <p class="name">用户名: {{ loginData.username }}</p>
+            <p class="role">用户角色: {{ computedRole }}</p>
           </div>
         </div>
         <div class="login-info">
-          <p>上次登录时间:<span>{{ loginData.last_login_time }}</span></p>
-          <p>上次登录地点:<span>{{ loginData.last_login_location }}</span></p>
+          <p>上次登录时间:<span>2024-2-17</span></p>
+          <p>上次登录地点:<span>四川</span></p>
         </div>
       </el-card>
 
