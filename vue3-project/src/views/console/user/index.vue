@@ -34,7 +34,7 @@
     <el-table :data="list" style="width: 100%" height="500px">
       <el-table-column v-for="item in tableLabel" :key="item.prop" :label="item.label" :prop="item.prop"
         :width="item.width ? item.width : 200" />
-        
+
       <el-table-column fixed="right" label="操作" min-width="180">
         <template #default="scope">
           <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
@@ -46,48 +46,45 @@
       class="pager mt-4" />
   </div>
 
-  <el-dialog v-model="dialogVisible" :title="action == 'add' ? '新增用户' : '编辑用户'" width="35%" :before-close="handleClose">
-    <el-form :inline="true" :model="formUser" ref="userForm">
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="用户名" prop="username" :rules="[{ required: true, message: '用户名是必填项' }]">
-            <el-input v-model="formUser.name" placeholder="请输入用户名" />
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="年龄" prop="age" :rules="[
-            { required: true, message: '年龄是必填项' },
-            { type: 'number', message: '年龄必须是数字' },
-          ]">
-            <el-input v-model.number="formUser.age" placeholder="请输入年龄" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-col :span="12">
-          <el-form-item label="性别" prop="sex" :rules="[{ required: true, message: '性别是必选项' }]">
-            <el-select v-model="formUser.sex" placeholder="请选择">
-              <el-option label="男" value="0" />
-              <el-option label="女" value="1" />
-            </el-select>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="出生日期" prop="birth" :rules="[{ required: true, message: '出生日期是必选项' }]">
-            <el-date-picker v-model="formUser.birth" type="date" label="出生日期" placeholder="请输入" style="width: 100%" />
-          </el-form-item>
-        </el-col>
-      </el-row>
-      <el-row>
-        <el-form-item label="地址" prop="addr" :rules="[{ required: true, message: '地址是必填项' }]">
-          <el-input v-model="formUser.addr" placeholder="请输入地址" />
-        </el-form-item>
-      </el-row>
+  <el-dialog v-model="dialogVisible" :title="action == 'add' ? '新增用户' : '编辑用户'" width="33%" :before-close="handleClose">
+    <el-form :model="formUser" ref="userForm" label-width="100px">
+
+      <el-form-item label="用户ID" prop="uid">
+        <el-input style="width: 250px;" v-model="formUser.uid" disabled></el-input>
+      </el-form-item>
+
+      <el-form-item label="用户名" prop="username" :rules="[{ required: true, message: '用户名是必填项' }]">
+        <el-input style="width: 250px;" v-model="formUser.username" placeholder="请输入用户名" />
+      </el-form-item>
+
+      <el-form-item label="密码" prop="password" :rules="[{ required: true, message: '密码是必填项' }]">
+        <el-input :type="showPassword ? 'text' : 'password'" style="width: 250px;" v-model="formUser.password"
+          placeholder="请输入密码" :disabled="isPasswordDisabled">
+          <template #append>
+            <el-button :icon="View" @click="togglePasswordVisibility"></el-button>
+          </template>
+        </el-input>
+      </el-form-item>
+
+      <el-form-item label="联系电话" prop="phone" :rules="[{ required: true, message: '电话是必填项' }]">
+        <el-input style="width: 250px;" v-model="formUser.phone" placeholder="请输入联系电话" />
+      </el-form-item>
+
+      <el-form-item label="邮箱" prop="email" :rules="[{ required: true, message: '邮箱是必填项' }]">
+        <el-input style="width: 250px;" v-model="formUser.email" placeholder="请输入邮箱" />
+      </el-form-item>
+
+      <el-form-item label="用户角色" prop="userType" :rules="[{ required: true, message: '用户角色是必选项' }]">
+        <el-select v-model="formUser.userType" placeholder="请选择用户角色">
+          <el-option label="系统管理员" value="admin" />
+          <el-option label="学生用户" value="student" />
+          <el-option label="企业用户" value="company" />
+        </el-select>
+      </el-form-item>
+
       <el-row style="justify-content: flex-end">
-        <el-form-item>
-          <el-button type="primary" @click="handleCancel">取消</el-button>
-          <el-button type="primary" @click="onSubmit">确定</el-button>
-        </el-form-item>
+        <el-button type="primary" @click="handleCancel">取消</el-button>
+        <el-button type="primary" @click="onSubmit">确定</el-button>
       </el-row>
     </el-form>
   </el-dialog>
@@ -95,6 +92,8 @@
 
 
 <script>
+import { View } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 import {
   defineComponent,
   getCurrentInstance,
@@ -102,7 +101,7 @@ import {
   ref,
   reactive,
   computed,
-} from "vue";
+} from 'vue';
 
 export default defineComponent({
   setup() {
@@ -184,13 +183,13 @@ export default defineComponent({
     };
 
     const changePage = (page) => {
-      // console.log(page);
       config.page = page;
       getUserData(config);
     };
+
     const formInline = reactive({
       keyword: "",
-      role: "", // 新增筛选条件角色
+      role: "",
     });
 
     const handleSearch = () => {
@@ -225,46 +224,80 @@ export default defineComponent({
 
     // 添加用户的form数据
     const formUser = reactive({
-      username: "", // 添加用户的 用户名
-      age: "",
-      sex: "",
-      birth: "",
-      addr: "",
+      username: "",
+      password: "",
+      phone: "",
+      email: "",
+      userType: "",
+      createTime: "",
     });
 
+    // 处理回传日期
     const timeFormat = (time) => {
       var time = new Date(time);
       var year = time.getFullYear();
       var month = time.getMonth() + 1;
       var date = time.getDate();
+      var hours = time.getHours();
+      var minutes = time.getMinutes();
+      var seconds = time.getSeconds();
       function add(m) {
         return m < 10 ? "0" + m : m;
       }
-      return year + "-" + add(month) + "-" + add(date);
+      // 返回格式化的日期和时间字符串
+      return year + "-" + add(month) + "-" + add(date) + "T" + add(hours) + ":" + add(minutes) + ":" + add(seconds);
     };
+
+    //设定密码可添加但不可修改逻辑
+    const isPasswordDisabled = ref(false);
 
     // 添加用户
     const onSubmit = () => {
       proxy.$refs.userForm.validate(async (valid) => {
         if (valid) {
           if (action.value == "add") {
-            formUser.birth = timeFormat(formUser.birth);
+            formUser.createTime = timeFormat(new Date());
             let res = await proxy.$api.addUser(formUser);
             if (res) {
-              // console.log(proxy.$refs);
+              // 显示成功消息提示
+              ElMessage({
+                showClose: true,
+                message: "用户添加成功",
+                type: "success",
+              });
+
               dialogVisible.value = false;
               proxy.$refs.userForm.resetFields();
               getUserData(config);
+            } else {
+              // 显示失败消息提示
+              ElMessage({
+                showClose: true,
+                message: "用户添加失败",
+                type: "error",
+              });
             }
           } else {
-            // 编辑的接口
-            formUser.sex == "男" ? (formUser.sex = 1) : (formUser.sex = 0);
+            // 编辑用户
             let res = await proxy.$api.editUser(formUser);
             if (res) {
-              // console.log(proxy.$refs);
+              // 显示成功消息提示
+              ElMessage({
+                showClose: true,
+                message: "用户编辑成功",
+                type: "success",
+              });
+
               dialogVisible.value = false;
               proxy.$refs.userForm.resetFields();
               getUserData(config);
+            } else {
+              // 显示失败消息提示
+              ElMessage({
+                showClose: true,
+                message: "用户编辑失败",
+                type: "error",
+              });
             }
           }
         } else {
@@ -276,37 +309,47 @@ export default defineComponent({
         }
       });
     };
+
     // 取消
     const handleCancel = () => {
       dialogVisible.value = false;
       proxy.$refs.userForm.resetFields();
     };
+
     // 区分编辑和新增
     const action = ref("add");
-    // 编辑用户
+
     const handleEdit = (row) => {
       // 浅拷贝
-
       action.value = "edit";
+      isPasswordDisabled.value = true; // 禁用密码输入框
       dialogVisible.value = true;
-      row.sex == 1 ? (row.sex = "男") : (row.sex = "女");
       proxy.$nextTick(() => {
         Object.assign(formUser, row);
       });
     };
+
     // 新增用户
     const handleAdd = () => {
       action.value = "add";
+      isPasswordDisabled.value = false; // 启用密码输入框
       dialogVisible.value = true;
+
+      // 重置表单数据
+      proxy.$nextTick(() => {
+        proxy.$refs.userForm.resetFields();
+      });
     };
+
     // 删除用户
     const handleDelete = (row) => {
-      ElMessageBox.confirm("你确定删除吗?")
+      ElMessageBox.confirm('确定删除吗？', '删除确认', {
+        confirmButtonText: '确认',
+        cancelButtonText: '取消',
+      })
         .then(async () => {
-          await proxy.$api.deleteUser({
-            id: row.id,
-          });
-
+          // 直接传递 row.uid 而不是一个对象
+          await proxy.$api.deleteUser(row.uid);
           ElMessage({
             showClose: true,
             message: "删除成功",
@@ -315,8 +358,15 @@ export default defineComponent({
           getUserData(config);
         })
         .catch(() => {
-          // catch error
+          // 用户取消或删除失败的处理
         });
+    };
+
+    // 展示密码
+    const showPassword = ref(false);
+
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
     };
     return {
       list,
@@ -336,6 +386,11 @@ export default defineComponent({
       handleDelete,
       resetSearch,
       timeFormat,
+      togglePasswordVisibility,
+      showPassword,
+      View,
+      ElMessage,
+      isPasswordDisabled,
     };
   },
 });

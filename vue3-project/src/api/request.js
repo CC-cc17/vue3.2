@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 
 const NETWORK_ERROR = '网络请求异常,请稍后重试'
 //创建axios实例对象
+
 const service = axios.create({
     baseURL: config.baseApi
 })

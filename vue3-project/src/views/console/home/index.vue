@@ -41,7 +41,7 @@ export default defineComponent({
     const store = useStore()
     const getLoginInfo = async () => {
       const token = store.state.token;
-      let res = await proxy.$api.getUserInfo({token: token});
+      let res = await proxy.$api.getUserInfo({ token: token });
       console.log(res);
       loginData.value = res.data;
     }
@@ -201,6 +201,13 @@ export default defineComponent({
       }
     });
 
+    const formattedLoginTime = computed(() => {
+      if (loginData.value.createTime) {
+        return loginData.value.createTime.split('T')[0];
+      }
+      return '';
+    });
+
     return {
       tableData,
       tableLabel,
@@ -208,6 +215,7 @@ export default defineComponent({
       loginData,
       isExtraInfoVisible,
       computedRole,
+      formattedLoginTime,
     }
   },
 })
@@ -231,8 +239,8 @@ export default defineComponent({
           </div>
         </div>
         <div class="login-info">
-          <p>上次登录时间:<span>2024-2-17</span></p>
-          <p>上次登录地点:<span>四川</span></p>
+          <p>账号UID:<span>{{ loginData.uid }}</span></p>
+          <p>账号创建时间:<span>{{ formattedLoginTime }}</span></p>
         </div>
       </el-card>
 

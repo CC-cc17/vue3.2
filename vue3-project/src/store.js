@@ -83,6 +83,10 @@ export default createStore({
     },
     getToken(state){
       state.token = state.token  || Cookie.get('token')
-    }
+    },
+    clearTabs(state) {
+      // 保留 home tab，移除其他所有 tabs
+      state.tabsList = state.tabsList.filter(tab => tab.name === 'home');
+    },
   }
 });

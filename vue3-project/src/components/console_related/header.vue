@@ -17,12 +17,16 @@ export default {
             return store.state.currentMenu;
         });
         const router = useRouter()
-        const handleLogout = () => {
-            store.commit("cleanMenu");
-            store.commit("clearToken")
-            router.push({
-                name: "reallogin",
-            });
+
+        //用户登出
+        const handleLogout = async () => {
+            let res = await proxy.$api.userLogout();
+                store.commit("cleanMenu");
+                store.commit("clearToken");
+                store.commit('clearTabs');
+                router.push({
+                    name: "reallogin",
+                });
         };
         const dialogVisible = ref(false)
 
@@ -30,7 +34,6 @@ export default {
             ElMessageBox.confirm('确定关闭吗？', '关闭确认', {
                 confirmButtonText: '确认',
                 cancelButtonText: '取消',
-                type: 'warning'
             })
                 .then(() => {
                     done(); // 用户点击确认，执行关闭对话框的操作
@@ -43,18 +46,21 @@ export default {
 
         // 用户表单数据
         const userForm = ref({
+            uid:'',
             username: '',
             phone: '',
             email: '',
-            password: ''
+            password: '',
+            createTime:'',
         });
 
         // 加载用户信息
         const loadUserInfo = async () => {
             try {
                 const token = store.state.token;
-                let res = await proxy.$api.getUserInfo({token: token});
-                userForm.value = res.data; 
+                let res = await proxy.$api.getUserInfo({ token: token });
+                userForm.value = res.data;
+                console.log(res.data)
             } catch (error) {
                 console.error('无法获取用户信息:', error);
             }
@@ -139,7 +145,7 @@ export default {
         <template #footer>
             <div class="dialog-footer">
                 <el-button @click="dialogVisible = false">取消</el-button>
-                <el-button type="primary" @click="dialogVisible = false">
+                <el-button type="primary" @click="updateUserInfo">
                     更新
                 </el-button>
             </div>

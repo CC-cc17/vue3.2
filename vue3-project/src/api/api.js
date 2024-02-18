@@ -24,7 +24,6 @@ export default {
             url: '/user/info',
             method: 'get',
             data: params,
-            mock: false
         })
     },
     getChartData() {
@@ -34,79 +33,81 @@ export default {
             mock: true
         })
     },
-    
+    //获取用户列表(在用)
     getUserData(params) {
         return request({
             url: '/user/list',
             method: 'get',
-            mock: false,
             data: params,
         })
     },
 
+    //管理员添加用户（在用)
     addUser(params) {
         return request({
-            url: '/user/add',
+            url: '/user',
             method: 'post',
-            mock: false,
             data: params,
-            // data:{total: 0,page: 1,}
         })
     },
+
+    //管理员编辑用户（在用)
     editUser(params) {
         return request({
-            url: '/user/edit',
-            method: 'post',
-            // 这个mock如果是true的话 用的就是线上fastmock的数据
-            mock: false,
+            url: '/user',
+            method: 'put',
             data: params
         })
     },
-    deleteUser(params) {
+
+    //通过id获取用户(在用)
+    getUserById(uid) {
         return request({
-            url: '/user/delete',
+            url: `/user/${uid}`,
             method: 'get',
-            // 这个mock如果是true的话 用的就是线上fastmock的数据
-            mock: false,
-            data: params
         })
     },
-    //根据用户名(TODO 根据用户角色)不同返回不一样的菜单列表 
+
+
+    //通过id删除用户（在用)
+    deleteUser(uid) {
+        return request({
+            url: `/user/${uid}`,
+            method: 'delete',
+        })
+    },
+
+    //根据用户名(TODO 根据用户角色)不同返回不一样的菜单列表 (在用)
     getMenu(params) {
         return request({
             url: '/permission/getMenu',
             method: 'post',
-            // 这个mock如果是true的话 用的就是线上fastmock的数据
-            mock: false,
             data: params
         })
     },
 
-    // // 获取登录用户信息 
-    // getLoginUser() {
-    //     return request({
-    //         url: '/user/loginInfo',
-    //         method: 'get',
-    //         mock: true
-    //     });
-    // },
-
     // 更新用户信息
-    updateUserInfo(data) {
+    updateUserInfo(params) {
         return request({
             url: '/user/updateInfo',
-            method: 'post',
-            mock: true,
-            data
+            method: 'put',
+            data: params
         });
     },
-    //用户登录
+    //用户登录 (在用)
     userLogin(params){
         return request({
             url:'/user/login',
             method: 'post',
-            mock: false,
             data:params
+        });
+    },
+    //用户登出 (在用)
+    userLogout(){
+        return request({
+            url:'/user/logout',
+            method: 'post',
+            withCredentials: true,
         });
     }
 }
