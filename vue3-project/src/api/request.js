@@ -1,7 +1,8 @@
 import axios from "axios";
 import config from '../config'
 import {ElMessage} from 'element-plus'
-import Cookies from "js-cookie";
+import store from '@/store';
+import Cookie from "js-cookie";
 
 const NETWORK_ERROR = '网络请求异常,请稍后重试'
 //创建axios实例对象
@@ -11,11 +12,13 @@ const service = axios.create({
 })
 
 //在请求之前做的一些事情
-service.interceptors.request.use((req) => {
-    //可自定义header
-    //jwt-token认证的时候
-    return req
-})
+service.interceptors.request.use((req) => { 
+    const token = store.state.token || Cookie.get('token');
+    if (token) {
+        req.headers['X-token'] = `Bearer ${token}`;
+    }
+    return req;
+});
 
 // 在请求之后做的一些事情(axios请求拦截)
 service.interceptors.response.use((res) =>{
