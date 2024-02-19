@@ -1,19 +1,21 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, getCurrentInstance} from 'vue';
 import { useStore } from 'vuex';
 import { View } from '@element-plus/icons-vue'
+import { useRouter } from 'vue-router';
 
-
+const router = useRouter();
 const store = useStore();
+const { proxy } = getCurrentInstance();
 const emailFromStore = computed(() => store.state.email);
 
 const signupForm = ref({
-  username: '',
-  password: '',
-  name: '',
-  gender: '',
-  email: '',
-  identity: '',
+  username: "",
+  password: "",
+  phone: "",
+  email: "",
+  userType: "",
+  createTime: "",
   agreeTerms: false
 });
 
@@ -43,20 +45,81 @@ const isValidSignupForm = computed(() => {
     /[a-z]/.test(signupForm.value.password) &&
     /[A-Z]/.test(signupForm.value.password) &&
     /[0-9]/.test(signupForm.value.password) &&
-    !/(.)\1\1/.test(signupForm.value.password) &&
-    signupForm.value.name &&
-    signupForm.value.gender && // 修正拼写错误
+    !/(.)\1\1/.test(signupForm.value.password) &&// 修正拼写错误
     signupForm.value.agreeTerms &&
     signupForm.value.email;
 });
 
-const submitForm = () => {
+const submitForm = async () => {
   if (isValidSignupForm.value) {
-    alert('提交注册!');
+    // 格式化创建时间
+    signupForm.value.createTime = timeFormat(new Date());
+
+    try {
+      // 调用API进行注册
+      const response = await proxy.$api.registerUser(signupForm.value);
+      // 根据响应处理结果
+      if (response) {
+        ElMessage({
+          showClose: true,
+          message: "用户注册成功",
+          type: "success",
+        });
+        // 重置表单
+        signupForm.value = {
+          username: "",
+          password: "",
+          phone: "",
+          email: "",
+          userType: "",
+          createTime: "",
+          agreeTerms: false
+        };
+        // 跳转到登录页面
+        router.push({
+          name: "reallogin",
+        });
+      } else {
+        // 处理错误情况
+        ElMessage({
+          showClose: true,
+          message: response.data.message || "注册失败，请稍后再试",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      // 处理请求错误
+      ElMessage({
+        showClose: true,
+        message: error.message || "注册过程中出现错误",
+        type: "error",
+      });
+    }
   } else {
-    alert('请检查表单!');
+    ElMessage({
+      showClose: true,
+      message: "请检查表单!",
+      type: "warning",
+    });
   }
 };
+
+
+    // 处理回传日期
+    const timeFormat = (time) => {
+      var time = new Date(time);
+      var year = time.getFullYear();
+      var month = time.getMonth() + 1;
+      var date = time.getDate();
+      var hours = time.getHours();
+      var minutes = time.getMinutes();
+      var seconds = time.getSeconds();
+      function add(m) {
+        return m < 10 ? "0" + m : m;
+      }
+      // 返回格式化的日期和时间字符串
+      return year + "-" + add(month) + "-" + add(date) + "T" + add(hours) + ":" + add(minutes) + ":" + add(seconds);
+    };
 </script>
 
 <template>
@@ -65,7 +128,7 @@ const submitForm = () => {
       <h2>注册</h2>
 
       <!-- 用户名部分 -->
-      <el-form-item label="用户名" required>
+      <el-form-item label="用户名(登录)" required>
         <el-input v-model="signupForm.username" placeholder="长度至少为4个字符"></el-input>
         <div v-if="signupForm.username && !isValidUsername(signupForm.username)">
           用户名无效。仅可以包含字母、数字和下划线。
@@ -102,15 +165,8 @@ const submitForm = () => {
       </el-form-item>
 
       <!-- 个人信息部分 -->
-      <el-form-item label="姓名" required>
-        <el-input v-model="signupForm.name" placeholder="姓名"></el-input>
-      </el-form-item>
-
-      <el-form-item label="性别" required>
-        <el-radio-group v-model="signupForm.gender">
-          <el-radio label="male">男</el-radio>
-          <el-radio label="female">女</el-radio>
-        </el-radio-group>
+      <el-form-item label="联系电话" required>
+        <el-input v-model="signupForm.phone" placeholder="联系电话"></el-input>
       </el-form-item>
 
       <el-form-item label="电子邮箱" required>
@@ -118,14 +174,14 @@ const submitForm = () => {
       </el-form-item>
 
       <el-form-item label="您的身份" required>
-        <el-radio-group v-model="signupForm.identity">
-          <el-radio label="student">学生</el-radio>
-          <el-radio label="business_representative">企业代表</el-radio>
+        <el-radio-group v-model="signupForm.userType">
+          <el-radio label="student" value="student" >学生</el-radio>
+          <el-radio label="company" value="company" >企业代表</el-radio>
         </el-radio-group>
       </el-form-item>
 
       <el-form-item>
-        <el-checkbox v-model="signupForm.agreeTerms">我已阅读并同意《使用条款》和《隐私政策》。</el-checkbox>
+        <el-checkbox v-model="signupForm.agreeTerms">我已阅读并同意《使用条款》和《隐私政策》</el-checkbox>
       </el-form-item>
 
       <el-form-item>
@@ -175,4 +231,5 @@ li {
 
 .is-valid .criteria-icon {
   background-color: #4CAF50;
-}</style>
+}
+</style>

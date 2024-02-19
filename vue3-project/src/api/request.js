@@ -15,7 +15,7 @@ const service = axios.create({
 service.interceptors.request.use((req) => { 
     const token = store.state.token || Cookie.get('token');
     if (token) {
-        req.headers['X-token'] = `Bearer ${token}`;
+        req.headers['X-token'] = `${token}`;
     }
     return req;
 });
@@ -23,14 +23,14 @@ service.interceptors.request.use((req) => {
 // 在请求之后做的一些事情(axios请求拦截)
 service.interceptors.response.use((res) =>{
     console.log(res.data);
-    const {code, data, msg} = res.data
+    const {code, data, message} = res.data
     //根据后端而定
     if (code == 200){
-        return {code, data, msg}
+        return {code, data, message}
     }else {
     //网络请求错误
-    ElMessage.error(msg || NETWORK_ERROR)
-    return Promise.reject(msg || NETWORK_ERROR)
+    ElMessage.error( message || NETWORK_ERROR);
+    return Promise.reject(new Error(message || NETWORK_ERROR));
     }
 })
 

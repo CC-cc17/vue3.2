@@ -51,6 +51,16 @@ export default {
         })
     },
 
+    //用户注册（在用)
+    registerUser(params) {
+        return request({
+            url: '/user/register',
+            method: 'post',
+            data: params,
+        })
+    },
+
+
     //管理员编辑用户（在用)
     editUser(params) {
         return request({
@@ -86,7 +96,7 @@ export default {
         })
     },
 
-    // 更新用户信息
+    // 更新登录用户信息(在用)
     updateUserInfo(params) {
         return request({
             url: '/user/updateInfo',
@@ -95,19 +105,67 @@ export default {
         });
     },
     //用户登录 (在用)
-    userLogin(params){
+    userLogin(params) {
         return request({
-            url:'/user/login',
+            url: '/user/login',
             method: 'post',
-            data:params
+            data: params
         });
     },
     //用户登出 (在用)
-    userLogout(){
+    userLogout() {
         return request({
-            url:'/user/logout',
+            url: '/user/logout',
             method: 'post',
             withCredentials: true,
         });
-    }
+    },
+
+    //提交企业表单（在用)
+    submitCompanyInfo(params) {
+        return request({
+            url: '/companyDetail',
+            method: 'post',
+            data: params,
+        })
+    },
+    //提交学生表单（在用)
+    submitStudentInfo(params) {
+        return request({
+            url: '/studentDetail',
+            method: 'post',
+            data: params,
+        })
+    },
+    //查询企业信息(在用)
+    queryCompanyInfo(uid) {
+        return request({
+            url: `/companyDetail/${uid}`,
+            method: 'get',
+        })
+    },
+    //查询学生信息(在用)
+    queryStudentInfo(uid) {
+        return request({
+            url: `/studentDetail/${uid}`,
+            method: 'get',
+        })
+    },
+    //更新企业信息(在用)
+    updateCompanyInfo(params) {
+        return request({
+            url: '/companyDetail',
+            method: 'put',
+            data: params,
+        })
+    },
+    //更新学生信息(在用)
+    updateStudentInfo(params) {
+        return request({
+            url: '/studentDetail',
+            method: 'put',
+            data: params,
+        })
+    },
+
 }

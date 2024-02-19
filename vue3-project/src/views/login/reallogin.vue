@@ -106,7 +106,10 @@ const sendResetPassword = () => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: rgba(255, 255, 255, 0.8);
+  background-image: url("../../assets/images/loginbackground.png"); /* 替换为你的图片路径 */
+  background-size: cover; /* 覆盖整个容器 */
+  background-position: center; /* 图片居中显示 */
+  background-repeat: no-repeat; /* 不重复图片 */
   position: relative;
 }
 
