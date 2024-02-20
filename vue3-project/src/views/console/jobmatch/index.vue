@@ -1,341 +1,185 @@
-<template>
-    我是jobmatch
-    <div class="user-header">
-      <el-button type="primary" @click="handleAdd">+新增</el-button>
-  
-      <!-- 筛选功能 -->
-      <el-form :inline="true" :model="formInline">
-        <el-form-item label="角色">
-          <el-select v-model="formInline.role" placeholder="请选择用户角色">
-            <el-option label="管理员" value="admin" />
-            <el-option label="学生用户" value="student" />
-            <el-option label="企业用户" value="company" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-  
-      <!-- 筛选功能 -->
-      <el-form :inline="true" :model="formInline">
-        <el-form-item label="配对状态">
-          <el-select v-model="formInline.matchResult" placeholder="请选择配对状态">
-            <el-option label="未匹配" value="0" />
-            <el-option label="已匹配" value="1" />
-          </el-select>
-        </el-form-item>
-      </el-form>
-  
-      <el-form :inline="true" :model="formInline">
-        <el-form-item label="请输入">
-          <el-input v-model="formInline.keyword" placeholder="请输入用户名" />
-        </el-form-item>
-  
-        <!-- 搜索按钮 -->
-        <el-form-item>
-          <el-button type="primary" @click="handleSearch">搜索</el-button>
-        </el-form-item>
-  
-        <!-- 清空按钮 -->
-        <el-form-item>
-          <el-button type="default" @click="resetSearch">清空搜索</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
-    <div class="table">
-      <el-table :data="list" style="width: 100%" height="500px">
-        <el-table-column v-for="item in tableLabel" :key="item.prop" :label="item.label" :prop="item.prop"
-          :width="item.width ? item.width : 125" />
-        <el-table-column fixed="right" label="操作" min-width="180">
-          <template #default="scope">
-            <el-button size="small" @click="handleEdit(scope.row)">编辑</el-button>
-            <el-button type="danger" size="small" @click="handleDelete(scope.row)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-pagination small background layout="prev, pager, next" :total="config.total" @current-change="changePage"
-        class="pager mt-4" />
-    </div>
-    <el-dialog v-model="dialogVisible" :title="action == 'add' ? '新增用户' : '编辑用户'" width="35%" :before-close="handleClose">
-      <el-form :inline="true" :model="formUser" ref="userForm">
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="姓名" prop="name" :rules="[{ required: true, message: '姓名是必填项' }]">
-              <el-input v-model="formUser.name" placeholder="请输入姓名" />
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="年龄" prop="age" :rules="[
-              { required: true, message: '年龄是必填项' },
-              { type: 'number', message: '年龄必须是数字' },
-            ]">
-              <el-input v-model.number="formUser.age" placeholder="请输入年龄" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="12">
-            <el-form-item label="性别" prop="sex" :rules="[{ required: true, message: '性别是必选项' }]">
-              <el-select v-model="formUser.sex" placeholder="请选择">
-                <el-option label="男" value="0" />
-                <el-option label="女" value="1" />
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="出生日期" prop="birth" :rules="[{ required: true, message: '出生日期是必选项' }]">
-              <el-date-picker v-model="formUser.birth" type="date" label="出生日期" placeholder="请输入" style="width: 100%" />
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-form-item label="地址" prop="addr" :rules="[{ required: true, message: '地址是必填项' }]">
-            <el-input v-model="formUser.addr" placeholder="请输入地址" />
-          </el-form-item>
-        </el-row>
-        <el-row style="justify-content: flex-end">
-          <el-form-item>
-            <el-button type="primary" @click="handleCancel">取消</el-button>
-            <el-button type="primary" @click="onSubmit">确定</el-button>
-          </el-form-item>
-        </el-row>
-      </el-form>
-    </el-dialog>
-  </template>
-  
-  
-  <script>
-  import {
-    defineComponent,
-    getCurrentInstance,
-    onMounted,
-    ref,
-    reactive,
-  } from "vue";
-  
-  export default defineComponent({
-    setup() {
-      const { proxy } = getCurrentInstance();
-      const list = ref([]);
-      const tableLabel = reactive([
-        {
-          prop: "name",
-          label: "姓名",
-        },
-        {
-          prop: "age",
-          label: "年龄",
-        },
-        {
-          prop: "sexLabel",
-          label: "性别",
-        },
-        {
-          prop: "birth",
-          label: "出生日期",
-          width: 200,
-        },
-        {
-          prop: "addr",
-          label: "地址",
-          width: 200,
-        },
-        {
-          prop: "role",
-          label: "角色",
-          width: 200,
-        },
-        {
-          prop: "matchResult",
-          label: "匹配状态",
-          width: 200,
-        },
-      ]);
-      onMounted(() => {
-        getUserData(config);
-      });
-      const config = reactive({
-        total: 0,
-        page: 1,
-        name: "",
-      });
-      const getUserData = async (config) => {
-        let params = {
-          page: config.page,
-          name: config.name,
-          role: config.role,
-          matchResult: config.matchResult,
+<script setup>
+import { ref, reactive, onMounted, getCurrentInstance } from 'vue'
+
+const { proxy } = getCurrentInstance();
+const parentBorder = ref(true)
+const tableData = ref({
+  records: []
+})
+
+const config = reactive({
+  total: 0,
+  page: 1,
+  size: 10
+});
+
+const industryTypeMap = {
+          1: '农,林,牧,渔业',
+          2: '采矿业',
+          3: '电力,热力,燃气及水生产和供应业',
+          4: '建筑业',
+          5: '制造业',
+          6: '批发和零售业',
+          7: '交通运输,仓储和邮政业',
+          8: '住宿和餐饮业',
+          9: '信息传输,软件和信息技术服务业',
+          10: '金融业',
+          11: '房地产业',
+          12: '租赁和商务服务业',
+          13: '科学研究和技术服务业',
+          14: '水利,环境和公共设施管理业',
+          15: '居民服务,修理和其他服务业',
+          16: '教育',
+          17: '卫生和社会工作',
+          18: '文化,体育和娱乐业',
+          19: '公共管理,社会保障和社会组织',
+          20: '国际组织'
         };
-        let res = await proxy.$api.getUserData(params);
-        // console.log(res);
-        config.total = res.count;
-        list.value = res.list.map((item) => {
-          item.sexLabel = item.sex === 0 ? "女" : "男";
-          return item;
-        });
-      };
-      const changePage = (page) => {
-        // console.log(page);
-        config.page = page;
-        getUserData(config);
-      };
-      const formInline = reactive({
-        keyword: "",
-        role: "", // 新增筛选条件角色
-        matchResult: "", // 新增筛选条件配对记录
-      });
-      const handleSearch = () => {
-        config.name = formInline.keyword;
-        config.role = formInline.role;
-        config.matchResult = formInline.matchResult;
-        getUserData(config);
-      };
-      // 清空表单方法
-      const resetSearch = () => {
-        formInline.role = '';
-        formInline.matchResult = '';
-        formInline.keyword = '';
-      };
-      // 控制模态框的显示隐藏
-      const dialogVisible = ref(false);
-      const handleClose = (done) => {
-        ElMessageBox.confirm("确定关闭吗?")
-          .then(() => {
-            proxy.$refs.userForm.resetFields();
-            done();
-          })
-          .catch(() => {
-            // catch error
-          });
-      };
-      // 添加用户的form数据
-      const formUser = reactive({
-        name: "", // 添加用户的 用户名
-        age: "",
-        sex: "",
-        birth: "",
-        addr: "",
-      });
-      const timeFormat = (time) => {
-        var time = new Date(time);
-        var year = time.getFullYear();
-        var month = time.getMonth() + 1;
-        var date = time.getDate();
-        function add(m) {
-          return m < 10 ? "0" + m : m;
+
+const jobMatchList = async () => {
+  try {
+    let res = await proxy.$api.getJobMatchList({ page: config.page, size: config.size });
+    if (res && res.data) {
+      const { records, total, current, size } = res.data;
+      tableData.value.records = records.map((item) => {
+        //处理性别
+        switch (item.student.gender) {
+          case 'Male':
+            item.student.gender = '男';
+            break;
+          case 'Female':
+            item.student.gender = '女';
+            break;
         }
-        return year + "-" + add(month) + "-" + add(date);
-      };
-      // 添加用户
-      const onSubmit = () => {
-        proxy.$refs.userForm.validate(async (valid) => {
-          if (valid) {
-            if (action.value == "add") {
-              formUser.birth = timeFormat(formUser.birth);
-              let res = await proxy.$api.addUser(formUser);
-              if (res) {
-                // console.log(proxy.$refs);
-                dialogVisible.value = false;
-                proxy.$refs.userForm.resetFields();
-                getUserData(config);
-              }
-            } else {
-              // 编辑的接口
-              formUser.sex == "男" ? (formUser.sex = 1) : (formUser.sex = 0);
-              let res = await proxy.$api.editUser(formUser);
-              if (res) {
-                // console.log(proxy.$refs);
-                dialogVisible.value = false;
-                proxy.$refs.userForm.resetFields();
-                getUserData(config);
-              }
-            }
+        //处理行业
+        item.student.industryType = industryTypeMap[item.student.industryType] || '其他行业';
+        item.company.industryType = industryTypeMap[item.company.industryType] || '其他行业';
+        // 处理日期
+        if (item.matchTime) {
+          const date = new Date(item.matchTime);
+          if (!isNaN(date.getTime())) {
+            // 日期格式化为 YYYY-MM-DD
+            item.matchTime = date.toISOString().split('T')[0];
           } else {
-            ElMessage({
-              showClose: true,
-              message: "请输入正确的内容",
-              type: "error",
-            });
+            item.matchTime = '无效日期';
           }
-        });
-      };
-      // 取消
-      const handleCancel = () => {
-        dialogVisible.value = false;
-        proxy.$refs.userForm.resetFields();
-      };
-      // 区分编辑和新增
-      const action = ref("add");
-      // 编辑用户
-      const handleEdit = (row) => {
-        // 浅拷贝
-  
-        action.value = "edit";
-        dialogVisible.value = true;
-        row.sex == 1 ? (row.sex = "男") : (row.sex = "女");
-        proxy.$nextTick(() => {
-          Object.assign(formUser, row);
-        });
-      };
-      // 新增用户
-      const handleAdd = () => {
-        action.value = "add";
-        dialogVisible.value = true;
-      };
-      // 删除用户
-      const handleDelete = (row) => {
-        ElMessageBox.confirm("你确定删除吗?")
-          .then(async () => {
-            await proxy.$api.deleteUser({
-              id: row.id,
-            });
-  
-            ElMessage({
-              showClose: true,
-              message: "删除成功",
-              type: "success",
-            });
-            getUserData(config);
-          })
-          .catch(() => {
-            // catch error
-          });
-      };
-      return {
-        list,
-        tableLabel,
-        config,
-        changePage,
-        formInline,
-        handleSearch,
-        dialogVisible,
-        handleClose,
-        formUser,
-        onSubmit,
-        handleCancel,
-        action,
-        handleEdit,
-        handleAdd,
-        handleDelete,
-        resetSearch,
-      };
-    },
-  });
-  </script>
-  
-  <style lang="less" scoped>
-  .table {
-    position: relative;
-    height: 520px;
-  
-    .pager {
-      position: absolute;
-      right: 0;
-      bottom: -20px;
+        }
+        return item;
+      });
+      config.total = total;
+      config.page = current;
+      config.size = size;
     }
+  } catch (error) {
+    console.error(error);
   }
-  
-  .user-header {
-    display: flex;
-    justify-content: space-between;
+};
+
+// 在组件挂载后调用 jobMatchList 函数获取数据
+onMounted(jobMatchList);
+
+const changePage = (page) => {
+  config.page = page;
+  jobMatchList();
+};
+</script>
+
+<template>
+  <div class="table-container">
+    <el-table :data="tableData.records" :border="parentBorder" style="width: 100%">
+      <el-table-column type="expand">
+        <template #default="props">
+          <div class="info-wrapper">
+
+            <div class="info-section student-info">
+            <h3 class="info-header">学生信息</h3>
+            <p class="info-item">学生ID: {{ props.row.student.id }}</p>
+            <p class="info-item">学生账户UID: {{ props.row.student.uid }}</p>
+            <p class="info-item">学生姓名: {{ props.row.student.name }}</p>
+            <p class="info-item">行业类型: {{ props.row.student.industryType }}</p>
+            <p class="info-item">学生年龄: {{ props.row.student.age }}</p>
+            <p class="info-item">学生性别: {{ props.row.student.gender }}</p>
+            <p class="info-item">学生自我介绍: {{ props.row.student.describe }}</p>
+            <p class="info-item">学生监护人: {{ props.row.student.supervisor }}</p>
+            <p class="info-item">学生监护人联系电话: {{ props.row.student.supervisorPhone }}</p>
+          </div>
+
+            <div class="info-section company-info">
+            <h3 class="info-header">企业信息</h3>
+            <p class="info-item">企业ID: {{ props.row.company.id }}</p>
+            <p class="info-item">企业账户UID: {{ props.row.company.uid }}</p>
+            <p class="info-item">企业名称: {{ props.row.company.companyName }}</p>
+            <p class="info-item">行业类型: {{ props.row.company.industryType }}</p>
+            <p class="info-item">岗位开始时间: {{ props.row.company.positionStart }}</p>
+            <p class="info-item">岗位结束时间: {{ props.row.company.positionEnd }}</p>
+            <p class="info-item">岗位及企业介绍: {{ props.row.company.positionDescribe }}</p>
+            <p class="info-item">企业联系人: {{ props.row.company.contactPerson }}</p>
+            <p class="info-item">企业联系人电话: {{ props.row.company.contactPhone }}</p>
+            <p class="info-item">企业地址: {{ props.row.company.companyAddress }}</p>
+          </div>
+
+        </div>
+        </template>
+      </el-table-column>
+      <el-table-column label="配对编号" prop="id" sortable/>
+      <el-table-column label="配对时间" prop="matchTime" sortable/>
+    </el-table>
+    <el-pagination small background layout="prev, pager, next" 
+    :total="config.total" @current-change="changePage"
+      class="pager mt-4" />
+  </div>
+</template>
+    
+<style lang="less" scoped>
+.table-container {
+  position: relative;
+  padding: 20px;
+  background: #fff;
+  box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+.info-wrapper {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.info-section {
+  flex: 1;
+  padding: 8px;
+  &:first-child {
+    border-right: 1px solid #ebeef5;
   }
-  </style>
-  
+}
+
+.student-info {
+  /* 学生信息特定样式，如果需要 */
+}
+
+.company-info {
+  /* 企业信息特定样式，如果需要 */
+}
+
+.info-header {
+  margin-top: 0;
+  margin-bottom: 8px;
+  color: #333;
+  font-weight: bold;
+}
+
+.info-item {
+  margin: 0;
+  padding: 4px 0;
+  border-bottom: 1px solid #ebeef5; /* 每项信息之间的分隔线 */
+  &:last-child {
+    border-bottom: none; /* 最后一项不需要分隔线 */
+  }
+}
+
+.pager {
+  position: absolute;
+  right: 20px;
+  bottom: -40px;
+}
+</style>

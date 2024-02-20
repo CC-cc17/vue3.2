@@ -27,7 +27,7 @@ export default {
       name: '',
       industryType: null,
       age: '',
-      gender:'',
+      gender: '',
       describe: '',
       supervisor: '',
       supervisorPhone: '',
@@ -53,26 +53,26 @@ export default {
 
     // 行业选项数据
     const industryOptions = ref([
-      { label: '农,林,牧,渔业', value: '1' },
-      { label: '采矿业', value: '2' },
-      { label: '电力,热力,燃气及水生产和供应业', value: '3' },
-      { label: '建筑业', value: '4' },
-      { label: '制造业', value: '5' },
-      { label: '批发和零售业', value: '6' },
-      { label: '交通运输,仓储和邮政业', value: '7' },
-      { label: '住宿和餐饮业', value: '8' },
-      { label: '信息传输,软件和信息技术服务业', value: '9' },
-      { label: '金融业', value: '10' },
-      { label: '房地产业', value: '11' },
-      { label: '租赁和商务服务业', value: '12' },
-      { label: '科学研究和技术服务业', value: '13' },
-      { label: '水利,环境和公共设施管理业', value: '14' },
-      { label: '居民服务,修理和其他服务业', value: '15' },
-      { label: '教育', value: '16' },
-      { label: '卫生和社会工作', value: '17' },
-      { label: '文化,体育和娱乐业', value: '18' },
-      { label: '公共管理,社会保障和社会组织', value: '19' },
-      { label: '国际组织', value: '20' },
+      { label: '农,林,牧,渔业', value: 1 },
+      { label: '采矿业', value: 2 },
+      { label: '电力,热力,燃气及水生产和供应业', value: 3 },
+      { label: '建筑业', value: 4 },
+      { label: '制造业', value: 5 },
+      { label: '批发和零售业', value: 6 },
+      { label: '交通运输,仓储和邮政业', value: 7 },
+      { label: '住宿和餐饮业', value: 8 },
+      { label: '信息传输,软件和信息技术服务业', value: 9 },
+      { label: '金融业', value: 10 },
+      { label: '房地产业', value: 11 },
+      { label: '租赁和商务服务业', value: 12 },
+      { label: '科学研究和技术服务业', value: 13 },
+      { label: '水利,环境和公共设施管理业', value: 14 },
+      { label: '居民服务,修理和其他服务业', value: 15 },
+      { label: '教育', value: 16 },
+      { label: '卫生和社会工作', value: 17 },
+      { label: '文化,体育和娱乐业', value: 18 },
+      { label: '公共管理,社会保障和社会组织', value: 19 },
+      { label: '国际组织', value: 20 },
     ]);
 
     // 获取登录数据的方法
@@ -178,113 +178,128 @@ export default {
       isCompanyFormSubmitted,
       queryStudentInfo,
       queryCompanyInfo,
+      industryOptions,
     };
   },
 };
 </script>
+
 <template>
   <el-container>
     <el-main>
       <!-- 学生表单 -->
-      <el-form v-if="isStudentVisible" ref="studentForm" :model="studentFormData" label-width="120px">
-        <p style="margin-bottom: 20px;">在此录入职业配对信息:</p>
-        <el-form-item label="真实姓名">
-          <el-input clearable :disabled="isStudentFormSubmitted" style="width: 300px;"
-            v-model="studentFormData.name"></el-input>
-        </el-form-item>
-        <el-form-item label="行业志愿">
-          <el-select clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.industryType"
-            placeholder="请选择">
-            <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="年龄">
-          <el-input-number clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.age"
-            :min="0"></el-input-number>
-        </el-form-item>
-        <el-form-item label="性别">
-          <el-select clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.gender"
-            placeholder="请选择">
-            <el-option label="男" value="Male"></el-option>
-            <el-option label="女" value="Female"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="自我介绍">
-          <el-input clearable style="width: 700px;" type="textarea" v-model="studentFormData.describe"></el-input>
-        </el-form-item>
-        <el-form-item label="监护人姓名">
-          <el-input clearable style="width: 300px;" v-model="studentFormData.supervisor"></el-input>
-        </el-form-item>
-        <el-form-item label="监护人联系电话">
-          <el-input clearable style="width: 300px;" v-model="studentFormData.supervisorPhone"></el-input>
-        </el-form-item>
-        <el-form-item label="可工作日期(始)">
-          <el-date-picker clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.availableStart"
-            type="date" placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="可工作日期(终)">
-          <el-date-picker clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.availableEnd" type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitStudentForm">提交</el-button>
-        </el-form-item>
-      </el-form>
-
-      <!-- 公司表单 -->
-      <el-form v-if="isCompanyVisible" ref="companyForm" :model="companyFormData" label-width="120px">
-        <p style="margin-bottom: 20px;">在此录入职业配对信息:</p>
-        <el-form-item label="企业名称">
-          <el-input clearable :disabled="isCompanyFormSubmitted" style="width: 600px;" v-model="companyFormData.companyName"></el-input>
-        </el-form-item>
-        <el-form-item label="行业类型">
-          <el-select clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.industryType"
-            placeholder="请选择">
-            <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value">
-            </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="性别要求">
-          <el-select clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.genderRequire"
-            placeholder="请选择">
-            <el-option label="男" value="Male"></el-option>
-            <el-option label="女" value="Female"></el-option>
-            <el-option label="无要求" value="Any"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="工作开始的日期">
-          <el-date-picker clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.positionStart" type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-        </el-form-item>
-        <el-form-item label="工作结束的日期">
-          <el-date-picker clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.positionEnd" type="date"
-            placeholder="选择日期">
-          </el-date-picker>
-          <el-form-item label="名额">
-            <el-input-number clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.quota"
+      <el-card class="box-card" v-if="isStudentVisible">
+        <el-form v-if="isStudentVisible" ref="studentForm" :model="studentFormData" label-width="120px">
+          <p style="margin-bottom: 20px;">在此录入职业配对信息:</p>
+          <el-form-item label="真实姓名">
+            <el-input clearable :disabled="isStudentFormSubmitted" style="width: 300px;"
+              v-model="studentFormData.name"></el-input>
+          </el-form-item>
+          <el-form-item label="行业志愿">
+            <el-select clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.industryType"
+              placeholder="请选择">
+              <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="年龄">
+            <el-input-number clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.age"
               :min="0"></el-input-number>
           </el-form-item>
-        </el-form-item>
-        <el-form-item label="工作/企业介绍">
-          <el-input clearable style="width: 700px;" type="textarea" v-model="companyFormData.positionDescribe"></el-input>
-        </el-form-item>
-        <el-form-item label="联络人姓名">
-          <el-input clearable style="width: 300px;" v-model="companyFormData.contactPerson"></el-input>
-        </el-form-item>
-        <el-form-item label="联络人电话">
-          <el-input clearable style="width: 300px;" v-model="companyFormData.contactPhone"></el-input>
-        </el-form-item>
-        <el-form-item label="企业地址">
-          <el-input clearable style="width: 700px;" type="textarea" v-model="companyFormData.companyAddress"></el-input>
-        </el-form-item>
-        <el-form-item>
-          <el-button type="primary" @click="submitCompanyForm">提交</el-button>
-        </el-form-item>
-      </el-form>
+          <el-form-item label="性别">
+            <el-select clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.gender" placeholder="请选择">
+              <el-option label="男" value="Male"></el-option>
+              <el-option label="女" value="Female"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="自我介绍">
+            <el-input clearable style="width: 700px;" type="textarea" v-model="studentFormData.describe"></el-input>
+          </el-form-item>
+          <el-form-item label="监护人姓名">
+            <el-input clearable style="width: 300px;" v-model="studentFormData.supervisor"></el-input>
+          </el-form-item>
+          <el-form-item label="监护人联系电话">
+            <el-input clearable style="width: 300px;" v-model="studentFormData.supervisorPhone"></el-input>
+          </el-form-item>
+          <el-form-item label="可工作日期(始)">
+            <el-date-picker clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.availableStart"
+              type="date" placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="可工作日期(终)">
+            <el-date-picker clearable :disabled="isStudentFormSubmitted" v-model="studentFormData.availableEnd"
+              type="date" placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitStudentForm">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+
+      <!-- 公司表单 -->
+      <el-card class="box-card" v-if="isCompanyVisible">
+        <el-form v-if="isCompanyVisible" ref="companyForm" :model="companyFormData" label-width="120px">
+          <p style="margin-bottom: 20px;">在此录入职业配对信息:</p>
+          <el-form-item label="企业名称">
+            <el-input clearable :disabled="isCompanyFormSubmitted" style="width: 600px;"
+              v-model="companyFormData.companyName"></el-input>
+          </el-form-item>
+          <el-form-item label="行业类型">
+            <el-select clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.industryType"
+              placeholder="请选择">
+              <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="性别要求">
+            <el-select clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.genderRequire"
+              placeholder="请选择">
+              <el-option label="男" value="Male"></el-option>
+              <el-option label="女" value="Female"></el-option>
+              <el-option label="无要求" value="Any"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="工作开始的日期">
+            <el-date-picker clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.positionStart"
+              type="date" placeholder="选择日期">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="工作结束的日期">
+            <el-date-picker clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.positionEnd" type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+            <el-form-item label="名额">
+              <el-input-number clearable :disabled="isCompanyFormSubmitted" v-model="companyFormData.quota"
+                :min="0"></el-input-number>
+            </el-form-item>
+          </el-form-item>
+          <el-form-item label="工作/企业介绍">
+            <el-input clearable style="width: 700px;" type="textarea"
+              v-model="companyFormData.positionDescribe"></el-input>
+          </el-form-item>
+          <el-form-item label="联络人姓名">
+            <el-input clearable style="width: 300px;" v-model="companyFormData.contactPerson"></el-input>
+          </el-form-item>
+          <el-form-item label="联络人电话">
+            <el-input clearable style="width: 300px;" v-model="companyFormData.contactPhone"></el-input>
+          </el-form-item>
+          <el-form-item label="企业地址">
+            <el-input clearable style="width: 700px;" type="textarea" v-model="companyFormData.companyAddress"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" @click="submitCompanyForm">提交</el-button>
+          </el-form-item>
+        </el-form>
+      </el-card>
+
     </el-main>
   </el-container>
 </template>
+
+<style scoped>
+.box-card {
+  margin-bottom: 20px;
+  width: 900px;
+}
+</style>

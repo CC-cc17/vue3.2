@@ -42,6 +42,15 @@ export default {
         })
     },
 
+    //获取配对列表(在用)
+    getJobMatchList(params) {
+        return request({
+            url: '/jobmatch/list',
+            method: 'get',
+            data: params,
+        })
+    },
+
     //管理员添加用户（在用)
     addUser(params) {
         return request({
@@ -167,5 +176,21 @@ export default {
             data: params,
         })
     },
+    //学生查询配对到的企业信息(在用)
+    queryStudentMatch(uid) {
+        return request({
+            url: `/studentDetail/match/${uid}`,
+            method: 'get',
+        })
+    },
+    //企业查询配对到的学生信息(在用)
+    queryCompanyMatch(uid) {
+        return request({
+            url: `/companyDetail/match/${uid}`,
+            method: 'get',
+        })
+    },
+
+
 
 }
