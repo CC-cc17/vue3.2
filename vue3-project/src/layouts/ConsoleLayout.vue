@@ -36,14 +36,14 @@ import Tab from '../components/console_related/tab.vue';
     .lay-container {
       flex-wrap: nowrap;
       .right-main {
-        height: calc(100% - 100px) !important;
+        height: calc(100% - 50px) !important;
       }
     }
     height: 100%;
     & > .el-container {
       height: 100%; 
       & > .el-aside {
-        height: 100%;
+        height: 1000px;
         background: #545c64;
       }
     }

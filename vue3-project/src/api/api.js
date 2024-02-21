@@ -2,20 +2,39 @@
 
 import request from "./request"
 export default {
-    //home 组件
-    getTableData(params) {
+    //获取行业人数表单数据(在用)
+    getTableData() {
         return request({
-            url: '/home/getTableData',
+            url: '/data/tableData',
             method: 'get',
-            data: params,
+        })
+    },
+    //获取配对相关统计数据(在用)
+    getCountData() {
+        return request({
+            url: '/data/countData',
+            method: 'get',
+        })
+    },
+    getLineChartData() {
+        return request({
+            url: '/home/getChartData',
+            method: 'get',
             mock: true
         })
     },
-    getCountData() {
+    //获取饼状图数据(在用)
+    getPieChartData() {
         return request({
-            url: '/home/getCountData',
+            url: '/data/pieData',
             method: 'get',
-            mock: true
+        })
+    },
+    //获取柱状图数据(在用)
+    getBarChartData() {
+        return request({
+            url: '/data/barData',
+            method: 'get',
         })
     },
     //获取用户登录信息 (在用)
@@ -26,13 +45,7 @@ export default {
             data: params,
         })
     },
-    getChartData() {
-        return request({
-            url: '/home/getChartData',
-            method: 'get',
-            mock: true
-        })
-    },
+
     //获取用户列表(在用)
     getUserData(params) {
         return request({
@@ -190,7 +203,4 @@ export default {
             method: 'get',
         })
     },
-
-
-
 }

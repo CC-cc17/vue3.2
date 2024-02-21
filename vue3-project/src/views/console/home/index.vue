@@ -1,11 +1,16 @@
 <script>
-import { defineComponent, getCurrentInstance, onMounted, reactive, ref, computed } from 'vue';
+import { defineComponent, getCurrentInstance, onMounted, reactive, ref, computed, nextTick, watch  } from 'vue';
 import * as echarts from 'echarts';
-import axios from 'axios';
 import { useStore } from 'vuex';
+import { CountTo } from 'vue3-count-to'
 
 
 export default defineComponent({
+
+  components: {
+    CountTo
+  },
+
   setup() {
     const { proxy } = getCurrentInstance();
     //定义table data
@@ -20,39 +25,39 @@ export default defineComponent({
     //定义login data 初始化为对象
     let loginData = ref({});
 
-    // 获取首页table数据
+    // 获取首页table数据(完成)
     const getTableList = async () => {
-      // await axios.get("https://dev.usemock.com/65c831f66309cc7a3775c533/home/getTableData").then((res)=>{
-      // console.log(res);
-
-      // if(res.data.code == 200){
-      //   tableData.value = res.data.data;
-      // }
-      // })
       let res = await proxy.$api.getTableData();
-      tableData.value = res;
+      tableData.value = res.data;
     };
-    // 获取首页count数据
+    // 获取首页count数据(完成)
     const getCountData = async () => {
       let res = await proxy.$api.getCountData();
-      countData.value = res;
+      countData.value = res.data;
     }
     // 获取首页登录信息
     const store = useStore()
     const getLoginInfo = async () => {
       const token = store.state.token;
       let res = await proxy.$api.getUserInfo({ token: token });
-      console.log(res);
+      //console.log(res);
       loginData.value = res.data;
     }
     onMounted(() => {
       getTableList();
-      //获取count数据
       getCountData();
-      //获取echart表格数据
-      getChartData();
-      //获取首页登录信息
       getLoginInfo();
+
+      // 使用 watch 来监控 isExtraInfoVisible 的变化
+      watch(isExtraInfoVisible, (newValue) => {
+        if (newValue) {
+          // 确保 DOM 已经更新
+          nextTick(() => {
+            getPieChartData();
+            getBarChartData();
+          });
+        }
+      });
     });
 
     // 关于echarts 表格的渲染部分
@@ -109,10 +114,6 @@ export default defineComponent({
       ],
       series: [],
     });
-    let orderData = reactive({
-      xData: [],
-      series: [],
-    });
     let userData = reactive({
       xData: [],
       series: [],
@@ -121,69 +122,48 @@ export default defineComponent({
       series: [],
     });
 
-    //获取数据的方法
-    const getChartData = async () => {
-      let result = await proxy.$api.getChartData();
-      let orderRes = result.orderData
-      let userRes = result.userData
-      let videoRes = result.videoData
+    // 获取饼状图数据的方法
+    const getPieChartData = async () => {
+      let result = await proxy.$api.getPieChartData();
+      let videoRes = result.data;
 
-      //处理orderData数据
-      orderData.xData = orderRes.date
-      const keyArray = Object.keys(orderRes.data[0])
-      const series = []
-      keyArray.forEach((key) => {
-        series.push({
-          name: key,
-          data: orderRes.data.map(item => item[key]),
-          type: 'line',
-        });
-      });
-      orderData.series = series;
-      xOptions.xAxis.data = orderData.xData;
-      xOptions.series = orderData.series;
-      //orderData进行渲染
-      let hEcharts = echarts.init(proxy.$refs['echart'])
-      hEcharts.setOption(xOptions);
+      // 处理videoData
+      videoData.series = [{
+        data: videoRes,
+        type: 'pie',
+      }];
+      pieOptions.series = videoData.series;
 
-      //处理userData
+      // videoData进行渲染
+      let vEcharts = echarts.init(proxy.$refs['videoechart']);
+      vEcharts.setOption(pieOptions);
+    };
+
+    // 获取柱状图数据的方法
+    const getBarChartData = async () => {
+      let result = await proxy.$api.getBarChartData();
+      let userRes = result.data;
+
+      // 处理userData
       userData.xData = userRes.map((item) => item.date);
       userData.series = [
         {
           name: '新增用户',
-          data: userRes.map((item) => item.new),
-          type: "bar",
-        },
-        {
-          name: '活跃用户',
-          data: userRes.map((item) => item.active),
-          type: "bar",
-        },
+          data: userRes.map((item) => item.newCount),
+          type: 'bar',
+        }
       ];
 
       xOptions.xAxis.data = userData.xData;
       xOptions.series = userData.series;
 
-      //orderData进行渲染
-      let uEcharts = echarts.init(proxy.$refs['userechart'])
+      // userData进行渲染
+      let uEcharts = echarts.init(proxy.$refs['userechart']);
       uEcharts.setOption(xOptions);
-
-      //处理videoData
-      videoData.series = [
-        {
-          data: videoRes,
-          type: 'pie',
-        },
-      ];
-      pieOptions.series = videoData.series;
-
-      //videoData进行渲染
-      let vEcharts = echarts.init(proxy.$refs['videoechart'])
-      vEcharts.setOption(pieOptions);
     };
 
+
     const isExtraInfoVisible = computed(() => {
-      // 假设loginData.value.role 包含当前用户的角色
       // 只有admin角色可以看到额外信息
       return loginData.value.role === 'admin';
     });
@@ -216,6 +196,8 @@ export default defineComponent({
       isExtraInfoVisible,
       computedRole,
       formattedLoginTime,
+      getPieChartData,
+      getBarChartData,
     }
   },
 })
@@ -246,8 +228,8 @@ export default defineComponent({
 
       <!-- 左下表格 -->
       <div v-if="isExtraInfoVisible">
-        <el-card shadow="hover" style="margin-top: 20px;" height="450px">
-          <el-table :data="tableData">
+        <el-card shadow="hover" style="margin-top: 20px;" height="400px">
+          <el-table :data="tableData" height="370px">
             <el-table-column v-for="(val, key) in tableLabel" :key="key" :prop="key" :label="val">
             </el-table-column>
           </el-table>
@@ -266,30 +248,23 @@ export default defineComponent({
             <component class="icons" :is="item.icon" :style="{ background: item.color }"></component>
 
             <div class="detail">
-              <p class="num">{{ item.value }}</p>
+              <CountTo :startVal="0" :endVal="parseFloat(item.value)" :duration="3000" class="num"/>
               <p class="txt">{{ item.name }}</p>
             </div>
           </el-card>
         </div>
       </div>
 
-      <!-- 右中echart折线图 -->
-      <div v-if="isExtraInfoVisible">
-        <el-card style="height:280px">
-          <div ref="echart" style="height:280px"></div>
-        </el-card>
-      </div>
-
       <!-- 右下echart -->
-      <div v-if="isExtraInfoVisible">
+      <div v-if="isExtraInfoVisible"> 
         <div class="graph">
           <!-- 饼状图 -->
-          <el-card style="height: 260px;">
-            <div ref="userechart" style="height:240px"></div>
+          <el-card style="height: 500px;">
+            <div ref="userechart" style="height:500px"></div>
           </el-card>
           <!-- 柱状图 -->
-          <el-card style="height: 260px;">
-            <div ref="videoechart" style="height:240px"></div>
+          <el-card style="height: 500px;">
+            <div ref="videoechart" style="height:500px"></div>
           </el-card>
         </div>
       </div>

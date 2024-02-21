@@ -6,8 +6,8 @@ import { useRouter } from 'vue-router';
 
 // 表单数据和规则
 const loginForm = reactive({
-  username: 'admin',
-  password: 'admin',
+  username: '',
+  password: '',
 })
 
 const rules = {
